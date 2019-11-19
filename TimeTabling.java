@@ -1,25 +1,19 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Scanner;
-
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 public class TimeTabling {
 
-    static String directory = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/Dataset/Toronto/";
+    static String folderDataset = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/Dataset/Toronto/";
     static String namafile[][] = {	{"car-f-92", "Carleton92"}, {"car-s-91", "Carleton91"}, {"ear-f-83", "EarlHaig83"}, {"hec-s-92", "EdHEC92"}, 
 									{"kfu-s-93", "KingFahd93"}, {"lse-f-91", "LSE91"}, {"pur-s-93", "pur93"}, {"rye-s-93", "rye92"}, {"sta-f-83", "St.Andrews83"},
-									{"tre-s-92", "Trent92"}, {"uta-s-92", "TorontoAS92"}, {"ute-s-92", "TorontoE92"}, {"yor-f-83", "YorkMills83"}};
+									{"tre-s-92", "Trent92"}, {"uta-s-92", "TorontoAS92"}, {"ute-s-92", "TorontoE92"}, {"yor-f-83", "YorkMills83"}
+								};
     
     static String file, filePilihanInput, filePilihanOutput;
     
     static int jumlahexam;
-    //static int ts;
+    
     static int timeslot[]; // fill with course & its timeslot
     static int conflict_matrix[][]; // fill with conflict matrix	
 	
@@ -41,7 +35,7 @@ public class TimeTabling {
         filePilihanInput = namafile[pilih-1][0];
         filePilihanOutput = namafile[pilih-1][1];
         
-        file = directory + filePilihanInput;
+        file = folderDataset + filePilihanInput;
         
         course = new Course(file);
         jumlahexam = course.getJumlahCourse();
@@ -50,12 +44,12 @@ public class TimeTabling {
         conflict_matrix = course.getConflictMatrix();
         
         // print dataset array
-		for (int i=0; i<10; i++) {
+		/*for (int i=0; i<10; i++) {
 			for(int j=0; j<10; j++) {
 				System.out.print(conflict_matrix[i][j] + " ");
 			}
 			System.out.println();
-		}
+		}*/
 		
 		// sort exam by degree
 		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
@@ -65,8 +59,8 @@ public class TimeTabling {
 		schedule = new Schedule(filePilihanOutput, conflict_matrix, jumlahexam);
 		timeslot = new int[jumlahexam];
 		
-		int[][] copyGraph = conflict_matrix;
-		int[][] graph = course_sorted;
+		//int[][] conflict_matrix_copy = conflict_matrix;
+		//int[][] graph = course_sorted;
 		
 		// start time
 		long starttime = System.nanoTime();
@@ -94,17 +88,13 @@ public class TimeTabling {
     		hasil_timeslot[course][1] = timeslot[course];
     	}
     	
-//    	for (int course = 0; course < jumlahexam; course++) 
-//    		System.out.println("Course " + hasiltimeslot[course][0] + " mendapat timeslot ke " + hasiltimeslot[course][1]);
-    	
     	String directoryOutput = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/ExamTimetableEvaluation/" + namaFileOutput +".sol";
         FileWriter writer = new FileWriter(directoryOutput, true);
         for (int i = 0; i <hasil_timeslot.length; i++) {
             for (int j = 0; j < hasil_timeslot[i].length; j++) {
                   writer.write(hasil_timeslot[i][j]+ " ");
             }
-            //this is the code that you change, this will make a new line between each y value in the array
-            writer.write("\n");   // write new line
+            writer.write("\n");
         }
         writer.close();
         
