@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Course {
 	
-	int jumlahcourse, degree;
+	int jumlahcourse, degree, jumlahmurid;
 	int[][] conflict_matrix;
 	int[][] course_sorted;
 	int[][] course_degree;
@@ -12,6 +12,8 @@ public class Course {
 	String fileInput;
 	
 	public Course(String fileInput) { this.fileInput = fileInput; }
+	
+	public int getJumlahMurid() { return this.jumlahmurid; }
 	
 	public int getJumlahCourse() throws IOException {
 		// read course file
@@ -34,6 +36,7 @@ public class Course {
 		BufferedReader readStudent = new BufferedReader(new FileReader(fileInput + ".stu"));
 		String spasi = " ";
 		while ((spasi = readStudent.readLine()) != null) {
+			jumlahmurid++;
 			String tmp [] = spasi.split(" ");
 			if	(tmp.length > 1) {
 				for(int i=0; i<tmp.length; i++)

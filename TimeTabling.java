@@ -13,7 +13,7 @@ public class TimeTabling {
 
     static String directory = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/Dataset/Toronto/";
     static String namafile[][] = {	{"car-f-92", "Carleton92"}, {"car-s-91", "Carleton91"}, {"ear-f-83", "EarlHaig83"}, {"hec-s-92", "EdHEC92"}, 
-									{"kfu-s-93", "KingFahd93"}, {"lse-f-91", "LSE91"}, {"pur-s-93", "pur-s-93"}, {"rye-s-93", "rye-s-93"}, {"sta-f-83", "St.Andrews83"},
+									{"kfu-s-93", "KingFahd93"}, {"lse-f-91", "LSE91"}, {"pur-s-93", "pur93"}, {"rye-s-93", "rye92"}, {"sta-f-83", "St.Andrews83"},
 									{"tre-s-92", "Trent92"}, {"uta-s-92", "TorontoAS92"}, {"ute-s-92", "TorontoE92"}, {"yor-f-83", "YorkMills83"}};
     
     static String file, filePilihanInput, filePilihanOutput;
@@ -65,27 +65,33 @@ public class TimeTabling {
 		schedule = new Schedule(filePilihanOutput, conflict_matrix, jumlahexam);
 		timeslot = new int[jumlahexam];
 		
+		int[][] copyGraph = conflict_matrix;
+		int[][] graph = course_sorted;
+		
 		// start time
 		long starttime = System.nanoTime();
-		//schedule.scheduling(timeslot);
 		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
 		
+		int jumlahMurid = course.getJumlahMurid();
+		
 		schedule.printSchedule(filePilihanOutput, timeslot);
+		
 		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
 		
 		// write to sol file
 		writeSolFile(hasil_timeslot, filePilihanOutput);
+		System.out.println("Penalti : " + Evaluator.getPenalty(conflict_matrix, hasil_timeslot, jumlahMurid));
     }
     
     public static void writeSolFile(int[][] hasiltimeslot, String namaFileOutput) throws IOException {
 		// fill hasiltimeslot array
-    	hasiltimeslot = new int[jumlahexam][2];
+    	hasil_timeslot = new int[jumlahexam][2];
     	for (int course = 0; course < jumlahexam; course++) {
-    		hasiltimeslot[course][0] = (course+1);
-    		hasiltimeslot[course][1] = timeslot[course];
+    		hasil_timeslot[course][0] = (course+1);
+    		hasil_timeslot[course][1] = timeslot[course];
     	}
     	
 //    	for (int course = 0; course < jumlahexam; course++) 
@@ -93,9 +99,9 @@ public class TimeTabling {
     	
     	String directoryOutput = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/ExamTimetableEvaluation/" + namaFileOutput +".sol";
         FileWriter writer = new FileWriter(directoryOutput, true);
-        for (int i = 0; i <hasiltimeslot.length; i++) {
-            for (int j = 0; j < hasiltimeslot[i].length; j++) {
-                  writer.write(hasiltimeslot[i][j]+ " ");
+        for (int i = 0; i <hasil_timeslot.length; i++) {
+            for (int j = 0; j < hasil_timeslot[i].length; j++) {
+                  writer.write(hasil_timeslot[i][j]+ " ");
             }
             //this is the code that you change, this will make a new line between each y value in the array
             writer.write("\n");   // write new line
