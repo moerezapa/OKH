@@ -4,9 +4,10 @@ public class Schedule {
 	
 	String file;
 	int[][] conflictmatrix;
+	int[] timeslot;
 	int jumlahexam;
 	int timeslotindex;
-	//int[] timeslot;
+	int timeslotmax;
 	
 	public Schedule(String file, int[][] conflictmatrix, int jumlahexam) {
 		this.file = file;
@@ -34,7 +35,7 @@ public class Schedule {
 		
 		printSchedule(file, timeslot);
 	}
-	public void schedulingByDegree(int [][] sortedCourse, int[] timeslot) {
+	public int[] schedulingByDegree(int [][] sortedCourse, int[] timeslot) {
     	timeslot = new int[jumlahexam];
     	timeslotindex = 1; // starting timeslot from 1
     	for(int i= 0; i < sortedCourse.length; i++)
@@ -51,9 +52,12 @@ public class Schedule {
 						timeslotindex = timeslotindex+1; // move to ts+1 if ts is crash
 			}
 		}
+		return timeslot;
 		
-		printSchedule(file, timeslot);
+		//printSchedule(file, timeslot);
     }
+	
+	public int getHowManyTimeSlot(int[] timeslot) { return Arrays.stream(timeslot).max().getAsInt(); }
 	
 	public static boolean isTimeslotAvailable(int course, int timeslot, int[][] conflictmatrix, int[] timeslotarray) {
 		for(int i = 0; i < conflictmatrix.length; i++)
@@ -71,7 +75,7 @@ public class Schedule {
 		return true;
 	}
     
-	private void printSchedule(String file, int[] timeslot) {
+	public void printSchedule(String file, int[] timeslot) {
 		System.out.println("\n================================================\n");
     	for (int i = 0; i < jumlahexam; i++)
     		System.out.println("Timeslot untuk course "+ (i+1) +" adalah timeslot: " + timeslot[i]);       
