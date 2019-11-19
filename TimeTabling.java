@@ -40,42 +40,51 @@ public class TimeTabling {
         int pilih = scanner.nextInt();
         
         filePilihanInput = namafile[pilih-1][0];
-        filePilihanOutput = namafile[pilih-1][1];
+        filePilihanOutput = namafile[pilih-1][0];
         
         file = directory + filePilihanInput;
+        
+        Course course = new Course(file);
+        jumlahexam = course.getJumlahCourse();
+        //System.out.print("\nJUMLAH EXAM : " + jumlahexam +"\n");
         // get course
-        getCourse(file);
+        conflict_matrix = new int[jumlahexam][jumlahexam];  
+        conflict_matrix = course.getConflictMatrix();
+        
+        //getCourse(file);
         
         // set conflict_matrix size with amount of jumlahexam
-        conflict_matrix = new int[jumlahexam][jumlahexam];     			
+           			
      	//System.out.println("Jumlah Course : " + conflict_matrix.length);
 		
         // get student
-        getConflictMatrix(file);
+        //getConflictMatrix(file);
 		// print dataset array
-		/*for (int i=0; i<10; i++) {
+		for (int i=0; i<10; i++) {
 			for(int j=0; j<10; j++) {
 				System.out.print(conflict_matrix[i][j] + " ");
 			}
 			System.out.println();
-		}*/
+		}
 		
 		// sort exam by degree
-		sortingCourse(conflict_matrix, jumlahexam);
-		/*for (int i=0; i<jumlahexam; i++)
-			System.out.println("Degree of course " + course_sorted[i][0] + " is " + course_sorted[i][1]);*/
+		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
 		
+		//sortingCourse(conflict_matrix, jumlahexam);
+		for (int i=0; i<jumlahexam; i++)
+			System.out.println("Degree of course " + course_sorted[i][0] + " is " + course_sorted[i][1]);
+		
+		Schedule schedule = new Schedule(filePilihanOutput, conflict_matrix, jumlahexam);
+		timeslot = new int[jumlahexam];
 		// start time
 		long starttime = System.nanoTime();
 		//timeSloting(conflict_matrix);
-		timeSlotingWithSorted(conflict_matrix, course_sorted);
+		schedule.schedulingByDegree(course_sorted, timeslot);
+		//timeSlotingWithSorted(conflict_matrix, course_sorted);
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
 		
-		// print schedule
-		printSchedule(filePilihanOutput);
-		// print running time
 		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
     }
 
@@ -172,14 +181,14 @@ public class TimeTabling {
     		timeslot[i] = 0;
     	
     	
-		for(int i = 0; i < sortedCourse.length; i++) {
-			for (int j = 1; j <= ts; j++) {
-				if(isTimeslotAvailableWithSorted(i, j, conflictmatrix, sortedCourse, timeslot)) {
-					timeslot[i] = j;
+		for(int course = 0; course < sortedCourse.length; course++) {
+			for (int time_slotindex = 1; time_slotindex <= ts; time_slotindex++) {
+				if(isTimeslotAvailableWithSorted(course, time_slotindex, conflictmatrix, sortedCourse, timeslot)) {
+					timeslot[sortedCourse[course][0]-1] = time_slotindex;
 					break;
 				}
 					else
-						ts = ts+1;
+						ts = ts+1; // move to ts+1 if ts is crash
 			}
 		}
     }
@@ -193,8 +202,9 @@ public class TimeTabling {
 	}
     public static boolean isTimeslotAvailableWithSorted(int course, int timeslot, int[][] conflictmatrix, int[][] sortedmatrix, int[] timeslotarray) {
 		for(int i = 0; i < sortedmatrix.length; i++) 
-			if(conflictmatrix[sortedmatrix[course][0]-1][i] != 0 && timeslotarray[i] == timeslot)
+			if(conflictmatrix[sortedmatrix[course][0]-1][i] != 0 && timeslotarray[i] == timeslot) {
 				return false;
+			}
 		
 		return true;
 	}
