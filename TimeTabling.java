@@ -21,8 +21,8 @@ public class TimeTabling {
 	static int hasil_timeslot[][];
 	
 	private static Scanner scanner;
-	private static Course course;
-	private static Schedule schedule;
+	//private static Course course;
+	//private static Schedule schedule;
 	
     public static void main(String[] args) throws IOException {
         scanner = new Scanner(System.in);
@@ -81,7 +81,7 @@ public class TimeTabling {
 		// use hill climbing for timesloting
 		
 		long starttime = System.nanoTime();
-		Optimization.getTimeslotByHillClimbing(file, 1000000);
+		new Optimization(file).getTimeslotByHillClimbing(1000000); // use hillclimbing methode for iterates 1000000 times
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
