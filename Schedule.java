@@ -3,7 +3,7 @@ import java.util.Arrays;
 public class Schedule {
 	
 	String file;
-	int[][] conflictmatrix;
+	int[][] conflictmatrix, timeslotSchedule;
 	int[] timeslot;
 	int jumlahexam;
 	int timeslotindex;
@@ -13,6 +13,16 @@ public class Schedule {
 		this.file = file;
 		this.conflictmatrix = conflictmatrix;
 		this.jumlahexam = jumlahexam;
+	}
+	
+	public int[][] getSchedule() {
+		// fill hasiltimeslot array
+		timeslotSchedule = new int[jumlahexam][2];
+    	for (int course = 0; course < jumlahexam; course++) {
+    		timeslotSchedule[course][0] = (course+1);
+    		timeslotSchedule[course][1] = timeslot[course];
+    	}
+		return this.timeslotSchedule; 
 	}
 	
 	public void scheduling(int[] timeslot) {
@@ -33,26 +43,25 @@ public class Schedule {
 			}
 		}
 		
-		printSchedule(file, timeslot);
+		//printSchedule(file, timeslot);
 	}
 	public int[] schedulingByDegree(int [][] sortedCourse, int[] timeslot) {
-    	timeslot = new int[jumlahexam];
+    	this.timeslot = new int[jumlahexam];
     	timeslotindex = 1; // starting timeslot from 1
     	for(int i= 0; i < sortedCourse.length; i++)
-    		timeslot[i] = 0;
-    	
+    		this.timeslot[i] = 0;
     	
 		for(int course = 0; course < sortedCourse.length; course++) {
 			for (int time_slotindex = 1; time_slotindex <= timeslotindex; time_slotindex++) {
-				if(isTimeslotAvailableWithSorted(course, time_slotindex, conflictmatrix, sortedCourse, timeslot)) {
-					timeslot[sortedCourse[course][0]-1] = time_slotindex;
+				if(isTimeslotAvailableWithSorted(course, time_slotindex, conflictmatrix, sortedCourse, this.timeslot)) {
+					this.timeslot[sortedCourse[course][0]-1] = time_slotindex;
 					break;
 				}
 					else
 						timeslotindex = timeslotindex+1; // move to ts+1 if ts is crash
 			}
 		}
-		return timeslot;
+		return this.timeslot;
 		
 		//printSchedule(file, timeslot);
     }
@@ -75,7 +84,14 @@ public class Schedule {
 		return true;
 	}
     
-	public void printSchedule(String file, int[] timeslot) {
+    public static boolean checkRandomTimeslot(int randomCourse, int randomTimeslot, int[][] conflict_matrix, int[][] jadwal){
+        for(int i=0; i<conflict_matrix.length; i++)
+            if(conflict_matrix[randomCourse][i] !=0 && jadwal[i][1]==randomTimeslot)
+                return false;
+        return true;              
+    }
+    
+	public void printSchedule() {
 		System.out.println("\n================================================\n");
     	for (int i = 0; i < jumlahexam; i++)
     		System.out.println("Timeslot untuk course "+ (i+1) +" adalah timeslot: " + timeslot[i]);       

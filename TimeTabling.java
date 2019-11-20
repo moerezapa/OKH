@@ -37,7 +37,7 @@ public class TimeTabling {
         
         file = folderDataset + filePilihanInput;
         
-        course = new Course(file);
+        /*course = new Course(file);
         jumlahexam = course.getJumlahCourse();
         
         conflict_matrix = new int[jumlahexam][jumlahexam];  
@@ -49,7 +49,7 @@ public class TimeTabling {
 				System.out.print(conflict_matrix[i][j] + " ");
 			}
 			System.out.println();
-		}*/
+		}
 		
 		// sort exam by degree
 		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
@@ -59,8 +59,6 @@ public class TimeTabling {
 		schedule = new Schedule(filePilihanOutput, conflict_matrix, jumlahexam);
 		timeslot = new int[jumlahexam];
 		
-		//int[][] conflict_matrix_copy = conflict_matrix;
-		//int[][] graph = course_sorted;
 		
 		// start time
 		long starttime = System.nanoTime();
@@ -71,13 +69,24 @@ public class TimeTabling {
 		
 		int jumlahMurid = course.getJumlahMurid();
 		
-		schedule.printSchedule(filePilihanOutput, timeslot);
+		schedule.printSchedule(timeslot);
 		
 		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
 		
 		// write to sol file
 		writeSolFile(hasil_timeslot, filePilihanOutput);
 		System.out.println("Penalti : " + Evaluator.getPenalty(conflict_matrix, hasil_timeslot, jumlahMurid));
+		*/
+        
+		// use hill climbing for timesloting
+		
+		long starttime = System.nanoTime();
+		Optimization.getTimeslotByHillClimbing(file, 1000000);
+		long endtime = System.nanoTime();
+		// end time
+		double runningtime = (double) (endtime - starttime)/1000000000;
+		
+		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
     }
     
     public static void writeSolFile(int[][] hasiltimeslot, String namaFileOutput) throws IOException {
