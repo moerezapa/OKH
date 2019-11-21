@@ -80,8 +80,17 @@ public class TimeTabling {
         
 		// use hill climbing for timesloting
 		
+        Course course = new Course(file);
+        int jumlahexam = course.getJumlahCourse();
+        
+        conflict_matrix = course.getConflictMatrix();
+        int jumlahmurid = course.getJumlahMurid();
+        
+		// sort exam by degree
+		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
+		
 		long starttime = System.nanoTime();
-		new Optimization(file).getTimeslotByHillClimbing(1000000); // use hillclimbing methode for iterates 1000000 times
+		new Optimization(file).getTimeslotByHillClimbing(conflict_matrix, course_sorted, jumlahexam, jumlahmurid, 1000000); // use hillclimbing methode for iterates 1000000 times
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
