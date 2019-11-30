@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Optimization {
-	int[][] timeslotHillClimbing, conflict_matrix, course_sorted;
+	int[][] timeslotHillClimbing, timeslotSimulatedAnnealing, conflict_matrix, course_sorted;
 	int[] timeslot;
 	String file;
 	int jumlahexam, randomCourse, randomTimeslot;
@@ -79,6 +79,7 @@ public class Optimization {
 		System.out.println("Penalti akhir : " + penaltiInitialFeasible); // print latest penalti
 	}
 	
+	public int[][] getTimeslotHillClimbing() { return timeslotHillClimbing; }
 	
 	public static int randomNumber(int min, int max) {
 		Random random = new Random();
@@ -87,4 +88,59 @@ public class Optimization {
 	
 	
 	// another method
+	public void getTimeslotBySimulatedAnnealing(int[][] conflict_matrix, int[][] course_sorted, int jumlahexam, int jumlahmurid, int iterasi) {
+		
+		/*
+		 * REFERENSI
+		 * https://github.com/nsadawi/simulated-annealing/blob/master/SimulatedAnnealing.java
+		 */
+		// set initial temp
+		double temp = 10000;
+		
+		// set coolingRate
+		double coolingRate = 0.0003;
+		
+		//create random intial solution
+		Schedule schedule = new Schedule(file, conflict_matrix, jumlahexam);
+		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
+		
+		timeslotSimulatedAnnealing = schedule.getSchedule(); // initial feasible solution
+	
+		// get current penalty
+		double currentPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
+		System.out.println("Initial penalty is " + currentPenalty);
+		
+		// loop until temperature has cooled
+		while (temp > 1) {
+			
+			// Get random positions in the tour
+            int courseRandomPosition1 = randomNumber(0 , jumlahexam);
+            int courseRandomPosition2 = randomNumber(0 , jumlahexam);
+            
+            //to make sure that tourPos1 and tourPos2 are different
+    		while(courseRandomPosition1 == courseRandomPosition2) {
+    			courseRandomPosition2 = randomNumber(0 , jumlahexam);
+    		}
+    		
+    		// swap 2 course
+    		int courseSwap1 = timeslotSimulatedAnnealing[courseRandomPosition1][0];
+    		int courseSwap2 = timeslotSimulatedAnnealing[courseRandomPosition2][0];
+    		
+    		
+    		
+    		// swap 3 course
+    		
+			// Keep track of the best solution found
+            /*if (currentSolution.getTotalDistance() < currentPenalty) {
+            	timeslotSimulatedAnnealing = schedule.getSchedule(); 
+            }*/
+            
+			// Cool system
+            temp *= 1 - coolingRate;
+		}
+		
+		// get final penalty
+		double finalPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
+		System.out.println("Final penalty is " + finalPenalty);
+	}
 }

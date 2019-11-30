@@ -15,14 +15,9 @@ public class TimeTabling {
     static int jumlahexam;
     
     static int timeslot[]; // fill with course & its timeslot
-    static int conflict_matrix[][]; // fill with conflict matrix	
-	
-	static int course_sorted [][];
-	static int hasil_timeslot[][];
+    static int[][] conflict_matrix, course_sorted, hasil_timeslot; // fill with conflict matrix	
 	
 	private static Scanner scanner;
-	//private static Course course;
-	//private static Schedule schedule;
 	
     public static void main(String[] args) throws IOException {
         scanner = new Scanner(System.in);
@@ -90,21 +85,25 @@ public class TimeTabling {
 		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
 		
 		long starttime = System.nanoTime();
-		new Optimization(file).getTimeslotByHillClimbing(conflict_matrix, course_sorted, jumlahexam, jumlahmurid, 1000000); // use hillclimbing methode for iterates 1000000 times
+		Optimization optimization = new Optimization(file);
+		optimization.getTimeslotByHillClimbing(conflict_matrix, course_sorted, jumlahexam, jumlahmurid, 1000000); // use hillclimbing methode for iterates 1000000 times
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
 		
 		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
+		
+		hasil_timeslot = optimization.getTimeslotHillClimbing();
+		writeSolFile(hasil_timeslot, filePilihanOutput);
     }
     
     public static void writeSolFile(int[][] hasiltimeslot, String namaFileOutput) throws IOException {
 		// fill hasiltimeslot array
-    	hasil_timeslot = new int[jumlahexam][2];
+    	/*hasil_timeslot = new int[jumlahexam][2];
     	for (int course = 0; course < jumlahexam; course++) {
     		hasil_timeslot[course][0] = (course+1);
     		hasil_timeslot[course][1] = timeslot[course];
-    	}
+    	}*/
     	
     	String directoryOutput = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/ExamTimetableEvaluation/" + namaFileOutput +".sol";
         FileWriter writer = new FileWriter(directoryOutput, true);

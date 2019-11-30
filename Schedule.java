@@ -25,12 +25,11 @@ public class Schedule {
 		return this.timeslotSchedule; 
 	}
 	
-	public void scheduling(int[] timeslot) {
+	public int[] scheduling(int[] timeslot) {
 		timeslot = new int[jumlahexam];
 		timeslotindex = 1;
     	for(int i= 0; i < conflictmatrix.length; i++)
     		timeslot[i] = 0;
-    	
     	
 		for(int i = 0; i < conflictmatrix.length; i++) {
 			for (int j = 1; j <= timeslotindex; j++) {
@@ -42,8 +41,7 @@ public class Schedule {
 						timeslotindex = timeslotindex+1;
 			}
 		}
-		
-		//printSchedule(file, timeslot);
+		return this.timeslot;
 	}
 	public int[] schedulingByDegree(int [][] sortedCourse, int[] timeslot) {
     	this.timeslot = new int[jumlahexam];
@@ -62,8 +60,6 @@ public class Schedule {
 			}
 		}
 		return this.timeslot;
-		
-		//printSchedule(file, timeslot);
     }
 	
 	public int getHowManyTimeSlot(int[] timeslot) { return Arrays.stream(timeslot).max().getAsInt(); }
@@ -85,6 +81,13 @@ public class Schedule {
 	}
     
     public static boolean checkRandomTimeslot(int randomCourse, int randomTimeslot, int[][] conflict_matrix, int[][] jadwal){
+        for(int i=0; i<conflict_matrix.length; i++)
+            if(conflict_matrix[randomCourse][i] !=0 && jadwal[i][1]==randomTimeslot)
+                return false;
+        return true;              
+    }
+    
+    public static boolean checkRandomTimeslotForSA(int randomCourse, int randomTimeslot, int[][] conflict_matrix, int[][] jadwal){
         for(int i=0; i<conflict_matrix.length; i++)
             if(conflict_matrix[randomCourse][i] !=0 && jadwal[i][1]==randomTimeslot)
                 return false;
