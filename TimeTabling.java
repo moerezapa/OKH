@@ -85,16 +85,17 @@ public class TimeTabling {
 		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
 		
 		long starttime = System.nanoTime();
-		Optimization optimization = new Optimization(file);
-		optimization.getTimeslotByHillClimbing(conflict_matrix, course_sorted, jumlahexam, jumlahmurid, 1000000); // use hillclimbing methode for iterates 1000000 times
+		Optimization optimization = new Optimization(file, conflict_matrix, course_sorted, jumlahexam, jumlahmurid);
+		//optimization.getTimeslotByHillClimbing(1000000); // use hillclimbing methode for iterates 1000000 times
+		optimization.getTimeslotBySimulatedAnnealing();
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
 		
 		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
 		
-		hasil_timeslot = optimization.getTimeslotHillClimbing();
-		writeSolFile(hasil_timeslot, filePilihanOutput);
+		//hasil_timeslot = optimization.getTimeslotHillClimbing();
+		//writeSolFile(hasil_timeslot, filePilihanOutput);
     }
     
     public static void writeSolFile(int[][] hasiltimeslot, String namaFileOutput) throws IOException {

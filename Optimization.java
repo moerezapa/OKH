@@ -6,22 +6,18 @@ public class Optimization {
 	int[][] timeslotHillClimbing, timeslotSimulatedAnnealing, conflict_matrix, course_sorted;
 	int[] timeslot;
 	String file;
-	int jumlahexam, randomCourse, randomTimeslot;
+	int jumlahexam, jumlahmurid, randomCourse, randomTimeslot;
 	
-	Optimization(String file) { this.file = file; }
+	Optimization(String file, int[][] conflict_matrix, int[][] course_sorted, int jumlahexam, int jumlahmurid) { 
+		this.file = file; 
+		this.conflict_matrix = conflict_matrix;
+		this.course_sorted = course_sorted;
+		this.jumlahexam = jumlahexam;
+		this.jumlahmurid = jumlahmurid;
+	}
 	
 	// hill climbing method
-	public void getTimeslotByHillClimbing(int[][] conflict_matrix, int[][] course_sorted, int jumlahexam, int jumlahmurid, int iterasi) throws IOException {
-		/*Course course = new Course(file);
-        int jumlahexam = course.getJumlahCourse();
-        
-        conflict_matrix = course.getConflictMatrix();
-		
-		// sort exam by degree
-		int[][] course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);*/
-		//for (int i=0; i<jumlahexam; i++)
-			//System.out.println("Degree of course " + course_sorted[i][0] + " is " + course_sorted[i][1]);
-		
+	public void getTimeslotByHillClimbing(int iterasi) throws IOException {
 		Schedule schedule = new Schedule(file, conflict_matrix, jumlahexam);
 		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
 		
@@ -88,7 +84,7 @@ public class Optimization {
 	
 	
 	// another method
-	public void getTimeslotBySimulatedAnnealing(int[][] conflict_matrix, int[][] course_sorted, int jumlahexam, int jumlahmurid, int iterasi) {
+	public void getTimeslotBySimulatedAnnealing() {
 		
 		/*
 		 * REFERENSI
@@ -105,7 +101,8 @@ public class Optimization {
 		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
 		
 		timeslotSimulatedAnnealing = schedule.getSchedule(); // initial feasible solution
-	
+		int[][] timeslotTemp = schedule.getSchedule(); // temp timesloting
+		
 		// get current penalty
 		double currentPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
 		System.out.println("Initial penalty is " + currentPenalty);
@@ -117,15 +114,43 @@ public class Optimization {
             int courseRandomPosition1 = randomNumber(0 , jumlahexam);
             int courseRandomPosition2 = randomNumber(0 , jumlahexam);
             
-            //to make sure that tourPos1 and tourPos2 are different
-    		while(courseRandomPosition1 == courseRandomPosition2) {
+            // make sure that tourPos1 and tourPos2 are different
+    		while(courseRandomPosition1 == courseRandomPosition2)
     			courseRandomPosition2 = randomNumber(0 , jumlahexam);
-    		}
     		
-    		// swap 2 course
+    		
+    		// get which course to be swapped
     		int courseSwap1 = timeslotSimulatedAnnealing[courseRandomPosition1][0];
     		int courseSwap2 = timeslotSimulatedAnnealing[courseRandomPosition2][0];
     		
+    		// get timeslot which course is swapped
+    		int timeslot1 = timeslotSimulatedAnnealing[courseRandomPosition1][1];
+    		int timeslot2 = timeslotSimulatedAnnealing[courseRandomPosition2][1];
+    		
+    		try {
+    			timeslotTemp[courseSwap1][0] = courseSwap2;
+    			timeslotTemp[courseSwap2][0] = courseSwap1;
+    			
+    			if (Schedule.checkRandomTimeslotForSA(courseSwap1, courseSwap2, timeslot1, timeslot2, conflict_matrix, timeslotSimulatedAnnealing)) {	
+        			timeslotTemp[courseSwap1][0] = courseSwap2;
+        			timeslotTemp[courseSwap2][0] = courseSwap1;
+    				double penaltiAfterSimulatedAnnealing = Evaluator.getPenalty(conflict_matrix, timeslotTemp, jumlahmurid);
+    				System.out.println("Sukses nge swap course " + courseSwap1 + " sama " + courseSwap2 + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
+    				System.out.println("Sukses nge swap course " + courseSwap1 + " sama " + courseSwap2 + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
+    				// compare between penalti. replace initial with after if initial penalti is greater
+//    				if(penaltiInitialFeasible > penaltiAfterHillClimbing) {
+//    					penaltiInitialFeasible = penaltiAfterHillClimbing;
+//    					timeslotHillClimbing[randomCourse][1] = timeslotHillClimbingSementara[randomCourse][1];
+//    				} 
+//    					else 
+//    						timeslotHillClimbingSementara[randomCourse][1] = timeslotHillClimbing[randomCourse][1];
+    			}
+    		}
+    			catch (Exception e) {
+    				System.out.println(e.toString() + " Out of bound soalnya course yang di random: " + courseSwap1 + " sama " + courseSwap2);
+    				System.out.println(e.toString() + " Out of bound soalnya timeslot yang di random: " + timeslot1 + " sama " + timeslot2);
+    				break;
+    			}
     		
     		
     		// swap 3 course

@@ -87,9 +87,9 @@ public class Schedule {
         return true;              
     }
     
-    public static boolean checkRandomTimeslotForSA(int randomCourse, int randomTimeslot, int[][] conflict_matrix, int[][] jadwal){
+    public static boolean checkRandomTimeslotForSA(int courseSwap1, int courseSwap2, int timeslotpos1, int timeslotpos2, int[][] conflict_matrix, int[][] jadwal){
         for(int i=0; i<conflict_matrix.length; i++)
-            if(conflict_matrix[randomCourse][i] !=0 && jadwal[i][1]==randomTimeslot)
+            if((conflict_matrix[courseSwap2][i] !=0 && jadwal[i][1]==timeslotpos1) && (conflict_matrix[courseSwap1][i] !=0 && jadwal[i][1]==timeslotpos2))
                 return false;
         return true;              
     }
