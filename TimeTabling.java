@@ -86,7 +86,7 @@ public class TimeTabling {
 		
 		long starttime = System.nanoTime();
 		Optimization optimization = new Optimization(file, conflict_matrix, course_sorted, jumlahexam, jumlahmurid);
-		//optimization.getTimeslotByHillClimbing(1000000); // use hillclimbing methode for iterates 1000000 times
+		//optimization.getTimeslotByHillClimbing(10); // use hillclimbing methode for iterates 1000000 times
 		optimization.getTimeslotBySimulatedAnnealing();
 		long endtime = System.nanoTime();
 		// end time

@@ -77,12 +77,6 @@ public class Optimization {
 	
 	public int[][] getTimeslotHillClimbing() { return timeslotHillClimbing; }
 	
-	public static int randomNumber(int min, int max) {
-		Random random = new Random();
-		return random.nextInt(max - min) + min;
-	}
-	
-	
 	// another method
 	public void getTimeslotBySimulatedAnnealing() {
 		
@@ -100,65 +94,77 @@ public class Optimization {
 		Schedule schedule = new Schedule(file, conflict_matrix, jumlahexam);
 		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
 		
-		timeslotSimulatedAnnealing = schedule.getSchedule(); // initial feasible solution
-		int[][] timeslotTemp = schedule.getSchedule(); // temp timesloting
+		//create random intial timeslot
+        int[][] currentTimeslot = schedule.getSchedule();
+        
+		// asume this is the best solution
+		timeslotSimulatedAnnealing = schedule.getSchedule(); 
 		
 		// get current penalty
-		double currentPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
-		System.out.println("Initial penalty is " + currentPenalty);
+		double initialPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
+		System.out.println("Initial penalty is " + initialPenalty);
 		
 		// loop until temperature has cooled
-		while (temp > 1) {
+		while (temp > 1) {		
+			int[][] timeslotSimulatedAnnealingSementara = schedule.getSchedule();
 			
 			// Get random positions in the tour
-            int courseRandomPosition1 = randomNumber(0 , jumlahexam);
-            int courseRandomPosition2 = randomNumber(0 , jumlahexam);
+            int courseRandomPosition1 = randomNumber(0 , jumlahexam-1);
+            int courseRandomPosition2 = randomNumber(0 , jumlahexam-1);
             
             // make sure that tourPos1 and tourPos2 are different
     		while(courseRandomPosition1 == courseRandomPosition2)
-    			courseRandomPosition2 = randomNumber(0 , jumlahexam);
-    		
+    			courseRandomPosition2 = randomNumber(0 , jumlahexam-1);
     		
     		// get which course to be swapped
-    		int courseSwap1 = timeslotSimulatedAnnealing[courseRandomPosition1][0];
-    		int courseSwap2 = timeslotSimulatedAnnealing[courseRandomPosition2][0];
+    		//int courseRandomPosition1 = timeslotSimulatedAnnealing[courseRandomPosition1][0];
+    		//int courseRandomPosition2 = timeslotSimulatedAnnealing[courseRandomPosition2][0];
     		
     		// get timeslot which course is swapped
     		int timeslot1 = timeslotSimulatedAnnealing[courseRandomPosition1][1];
     		int timeslot2 = timeslotSimulatedAnnealing[courseRandomPosition2][1];
     		
     		try {
-    			timeslotTemp[courseSwap1][0] = courseSwap2;
-    			timeslotTemp[courseSwap2][0] = courseSwap1;
+    			timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] = courseRandomPosition2;
+    			timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] = courseRandomPosition1;
     			
-    			if (Schedule.checkRandomTimeslotForSA(courseSwap1, courseSwap2, timeslot1, timeslot2, conflict_matrix, timeslotSimulatedAnnealing)) {	
-        			timeslotTemp[courseSwap1][0] = courseSwap2;
-        			timeslotTemp[courseSwap2][0] = courseSwap1;
-    				double penaltiAfterSimulatedAnnealing = Evaluator.getPenalty(conflict_matrix, timeslotTemp, jumlahmurid);
-    				System.out.println("Sukses nge swap course " + courseSwap1 + " sama " + courseSwap2 + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
-    				System.out.println("Sukses nge swap course " + courseSwap1 + " sama " + courseSwap2 + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
+    			// swap if not crash
+    			if (Schedule.checkRandomTimeslotForSA(courseRandomPosition1, courseRandomPosition2, timeslot1, timeslot2, conflict_matrix, timeslotSimulatedAnnealing)) {	
+    				timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] = courseRandomPosition2;
+    				timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] = courseRandomPosition1;
+    				double penaltiAfterSimulatedAnnealing = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid);
+    				//System.out.println("Posisi awal : course " + courseRandomPosition1 + " dengan timeslot " + timeslot1 + " sama " + courseRandomPosition2 + " timeslot " + timeslot2 + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
+    				//System.out.println("Posisi akhir : course " + timeslotSimulatedAnnealingASementara[courseRandomPosition1][0] + " timeslot " + timeslotSimulatedAnnealingASementara[courseRandomPosition1][1] + " sama " + timeslotSimulatedAnnealingASementara[courseRandomPosition2][0] + " timeslot " + timeslotSimulatedAnnealingASementara[courseRandomPosition2][1] + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
+    				
+    				// Decide if we should accept the neighbour
+    	            double randomNumber = randomDouble();
+    	            if (acceptanceProbability(initialPenalty, penaltiAfterSimulatedAnnealing, temp) > randomNumber) {
+    	            	currentTimeslot[courseRandomPosition1][0] = timeslotSimulatedAnnealingSementara[courseRandomPosition2][0];
+    	            	currentTimeslot[courseRandomPosition2][0] = timeslotSimulatedAnnealingSementara[courseRandomPosition1][0];
+    	            	System.out.println("acceptance probability");
+    	            }
+    	            
     				// compare between penalti. replace initial with after if initial penalti is greater
-//    				if(penaltiInitialFeasible > penaltiAfterHillClimbing) {
-//    					penaltiInitialFeasible = penaltiAfterHillClimbing;
-//    					timeslotHillClimbing[randomCourse][1] = timeslotHillClimbingSementara[randomCourse][1];
-//    				} 
-//    					else 
-//    						timeslotHillClimbingSementara[randomCourse][1] = timeslotHillClimbing[randomCourse][1];
+    	            if (initialPenalty > penaltiAfterSimulatedAnnealing) {
+    	            	timeslotSimulatedAnnealing = currentTimeslot;
+    	            	double penaltinew = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
+    	            	System.out.println(penaltinew);
+    	            }
+    	           
     			}
+    				else {
+    					timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] = courseRandomPosition1;
+    					timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] = courseRandomPosition2;
+					}
     		}
     			catch (Exception e) {
-    				System.out.println(e.toString() + " Out of bound soalnya course yang di random: " + courseSwap1 + " sama " + courseSwap2);
+    				System.out.println(e.toString() + " Out of bound soalnya course yang di random: " + courseRandomPosition1 + " sama " + courseRandomPosition2);
     				System.out.println(e.toString() + " Out of bound soalnya timeslot yang di random: " + timeslot1 + " sama " + timeslot2);
     				break;
     			}
     		
     		
     		// swap 3 course
-    		
-			// Keep track of the best solution found
-            /*if (currentSolution.getTotalDistance() < currentPenalty) {
-            	timeslotSimulatedAnnealing = schedule.getSchedule(); 
-            }*/
             
 			// Cool system
             temp *= 1 - coolingRate;
@@ -167,5 +173,37 @@ public class Optimization {
 		// get final penalty
 		double finalPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
 		System.out.println("Final penalty is " + finalPenalty);
+		//System.out.println("Initial penalty is " + initialPenalty);
+	}
+	
+	private static int randomNumber(int min, int max) {
+		Random random = new Random();
+		return random.nextInt(max - min) + min;
+	}
+	
+	/**
+	 * this method returns a random number n such that
+	 * 0.0 <= n <= 1.0
+	 * @return random such that 0.0 <= random <= 1.0
+	 */
+	private static double randomDouble() {
+		Random r = new Random();
+		return r.nextInt(1000) / 1000.0;
+	}
+	
+	/**
+	 * Calculates the acceptance probability
+	 * @param currentDistance the total distance of the current tour
+	 * @param newDistance the total distance of the new tour
+	 * @param temperature the current temperature
+	 * @return value the probability of whether to accept the new tour
+	 */
+	private static double acceptanceProbability(double currentPenalty, double newPenalty, double temperature) {
+		// If the new solution is better, accept it
+		if (newPenalty < currentPenalty)
+			return 1.0;
+		
+		// If the new solution is worse, calculate an acceptance probability
+		return Math.exp((currentPenalty - newPenalty) / temperature);
 	}
 }
