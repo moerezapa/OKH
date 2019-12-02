@@ -72,8 +72,6 @@ public class TimeTabling {
 		writeSolFile(hasil_timeslot, filePilihanOutput);
 		System.out.println("Penalti : " + Evaluator.getPenalty(conflict_matrix, hasil_timeslot, jumlahMurid));
 		*/
-        
-		// use hill climbing for timesloting
 		
         Course course = new Course(file);
         int jumlahexam = course.getJumlahCourse();
@@ -86,26 +84,29 @@ public class TimeTabling {
 		
 		long starttime = System.nanoTime();
 		Optimization optimization = new Optimization(file, conflict_matrix, course_sorted, jumlahexam, jumlahmurid);
-		//optimization.getTimeslotByHillClimbing(10); // use hillclimbing methode for iterates 1000000 times
-		optimization.getTimeslotBySimulatedAnnealing();
+		/*
+		 * use hill climbing for timesloting
+		 */
+		optimization.getTimeslotByHillClimbing(1000); // use hillclimbing methode for iterates 1000000 times
+		
+		/*
+		 * use simmulated annealing for timesloting
+		 */
+//		optimization.getSimmulatedAnnealing(100000);
+//		optimization.getTimeslotBySimulatedAnnealing();
+//		optimization.cobaSimmulatedAnnealing(1000, 1000);
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
 		
 		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
 		
-		//hasil_timeslot = optimization.getTimeslotHillClimbing();
-		//writeSolFile(hasil_timeslot, filePilihanOutput);
+//		hasil_timeslot = optimization.getTimeslotHillClimbing();
+//		hasil_timeslot = optimization.getSimulatedAnnealing();
+//		writeSolFile(hasil_timeslot, filePilihanOutput);
     }
     
     public static void writeSolFile(int[][] hasiltimeslot, String namaFileOutput) throws IOException {
-		// fill hasiltimeslot array
-    	/*hasil_timeslot = new int[jumlahexam][2];
-    	for (int course = 0; course < jumlahexam; course++) {
-    		hasil_timeslot[course][0] = (course+1);
-    		hasil_timeslot[course][1] = timeslot[course];
-    	}*/
-    	
     	String directoryOutput = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/ExamTimetableEvaluation/" + namaFileOutput +".sol";
         FileWriter writer = new FileWriter(directoryOutput, true);
         for (int i = 0; i <hasil_timeslot.length; i++) {

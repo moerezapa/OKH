@@ -19,6 +19,17 @@ public class Evaluator {
 		
 	}
 	
+	public static int[][] copySolution(int[][] arr) {
+		int[][] copySolution = new int[arr.length][2];
+		
+		for(int i = 0; i < arr.length; i++) {
+			copySolution[i][0] = arr[i][0];
+			copySolution[i][1] = arr[i][1];
+		}
+		
+		return copySolution;
+	}
+	
 	public static double getPenalty(int[][] matrix, int[][] jadwal, int jumlahMurid) {
 		double penalty = 0;
 		

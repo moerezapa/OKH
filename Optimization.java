@@ -85,7 +85,7 @@ public class Optimization {
 		 * https://github.com/nsadawi/simulated-annealing/blob/master/SimulatedAnnealing.java
 		 */
 		// set initial temp
-		double temp = 10000;
+		double temp = 2;
 		
 		// set coolingRate
 		double coolingRate = 0.0003;
@@ -98,7 +98,7 @@ public class Optimization {
         int[][] currentTimeslot = schedule.getSchedule();
         
 		// asume this is the best solution
-		timeslotSimulatedAnnealing = schedule.getSchedule(); 
+		timeslotSimulatedAnnealing = currentTimeslot; 
 		
 		// get current penalty
 		double initialPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
@@ -106,50 +106,58 @@ public class Optimization {
 		
 		// loop until temperature has cooled
 		while (temp > 1) {		
-			int[][] timeslotSimulatedAnnealingSementara = schedule.getSchedule();
+			int[][] timeslotSimulatedAnnealingSementara = timeslotSimulatedAnnealing;
 			
 			// Get random positions in the tour
             int courseRandomPosition1 = randomNumber(0 , jumlahexam-1);
             int courseRandomPosition2 = randomNumber(0 , jumlahexam-1);
-            
+            System.out.println("Course yang dirandom " + courseRandomPosition1 + " dengan " + courseRandomPosition2);
+
+//            int courseRandom1 = timeslotSimulatedAnnealing[courseRandomPosition1][0];
+//            int courseRandom2 = timeslotSimulatedAnnealing[courseRandomPosition2][0];
             // make sure that tourPos1 and tourPos2 are different
     		while(courseRandomPosition1 == courseRandomPosition2)
     			courseRandomPosition2 = randomNumber(0 , jumlahexam-1);
     		
-    		// get which course to be swapped
-    		//int courseRandomPosition1 = timeslotSimulatedAnnealing[courseRandomPosition1][0];
-    		//int courseRandomPosition2 = timeslotSimulatedAnnealing[courseRandomPosition2][0];
-    		
     		// get timeslot which course is swapped
     		int timeslot1 = timeslotSimulatedAnnealing[courseRandomPosition1][1];
     		int timeslot2 = timeslotSimulatedAnnealing[courseRandomPosition2][1];
+    		System.out.println("Yang mau di swap");
+    		System.out.println("Course " + timeslotSimulatedAnnealing[courseRandomPosition1][0] + " has timeslot: " + timeslotSimulatedAnnealing[courseRandomPosition1][1]);
+    		System.out.println("Course " + timeslotSimulatedAnnealing[courseRandomPosition2][0] + " has timeslot: " + timeslotSimulatedAnnealing[courseRandomPosition2][1]);
     		
     		try {
-    			timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] = courseRandomPosition2;
-    			timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] = courseRandomPosition1;
+    			timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] = timeslotSimulatedAnnealing[courseRandomPosition2][0];
+    			timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] = timeslotSimulatedAnnealing[courseRandomPosition1][0];
     			
     			// swap if not crash
     			if (Schedule.checkRandomTimeslotForSA(courseRandomPosition1, courseRandomPosition2, timeslot1, timeslot2, conflict_matrix, timeslotSimulatedAnnealing)) {	
-    				timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] = courseRandomPosition2;
-    				timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] = courseRandomPosition1;
+    				timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] = timeslotSimulatedAnnealing[courseRandomPosition2][0];
+    				timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] = timeslotSimulatedAnnealing[courseRandomPosition1][0];
     				double penaltiAfterSimulatedAnnealing = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid);
-    				//System.out.println("Posisi awal : course " + courseRandomPosition1 + " dengan timeslot " + timeslot1 + " sama " + courseRandomPosition2 + " timeslot " + timeslot2 + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
-    				//System.out.println("Posisi akhir : course " + timeslotSimulatedAnnealingASementara[courseRandomPosition1][0] + " timeslot " + timeslotSimulatedAnnealingASementara[courseRandomPosition1][1] + " sama " + timeslotSimulatedAnnealingASementara[courseRandomPosition2][0] + " timeslot " + timeslotSimulatedAnnealingASementara[courseRandomPosition2][1] + " dengan penalti: " + penaltiAfterSimulatedAnnealing);
-    				
+    				System.out.println("Setelah di swap");
+    	    		System.out.println("Course " + timeslotSimulatedAnnealingSementara[courseRandomPosition1][0] + " has timeslot: " + timeslotSimulatedAnnealingSementara[courseRandomPosition1][1]);
+    	    		System.out.println("Course " + timeslotSimulatedAnnealingSementara[courseRandomPosition2][0] + " has timeslot: " + timeslotSimulatedAnnealingSementara[courseRandomPosition2][1]);
+    	    		
     				// Decide if we should accept the neighbour
     	            double randomNumber = randomDouble();
     	            if (acceptanceProbability(initialPenalty, penaltiAfterSimulatedAnnealing, temp) > randomNumber) {
     	            	currentTimeslot[courseRandomPosition1][0] = timeslotSimulatedAnnealingSementara[courseRandomPosition2][0];
     	            	currentTimeslot[courseRandomPosition2][0] = timeslotSimulatedAnnealingSementara[courseRandomPosition1][0];
-    	            	System.out.println("acceptance probability");
+    	            	System.out.println("Simpan timeslot sementara dulu");
+    	            	System.out.println("current course for swap 1 " + currentTimeslot[courseRandomPosition1][0] + " has timeslot: " + currentTimeslot[courseRandomPosition1][1]);
+    	        		System.out.println("current course for swap 2 " + currentTimeslot[courseRandomPosition2][0] + " has timeslot: " + currentTimeslot[courseRandomPosition2][1]);
     	            }
     	            
     				// compare between penalti. replace initial with after if initial penalti is greater
     	            if (initialPenalty > penaltiAfterSimulatedAnnealing) {
     	            	timeslotSimulatedAnnealing = currentTimeslot;
     	            	double penaltinew = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
-    	            	System.out.println(penaltinew);
+    	            	System.out.println("current timeslot for swap 3 " + timeslotSimulatedAnnealing[courseRandomPosition1][0]);
+    	            	System.out.println("current timeslot for swap 4 " + timeslotSimulatedAnnealing[courseRandomPosition2][0]);
     	            }
+    	            	else
+    	            		System.out.println("Penalty lebih jelek, timeslotSimulatedAnnealing tidak berubah");
     	           
     			}
     				else {
@@ -176,6 +184,124 @@ public class Optimization {
 		//System.out.println("Initial penalty is " + initialPenalty);
 	}
 	
+	public void getSimmulatedAnnealing(int temperature) throws IOException {
+		double coolingrate = 0.001;
+		Schedule schedule = new Schedule(file, conflict_matrix, jumlahexam);
+		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
+		  
+		//schedule.printSchedule();
+		  
+		timeslotSimulatedAnnealing = schedule.getSchedule(); // initial feasible solution
+		int[][] timeslotSimulatedAnnealingSementara = new int[timeslotSimulatedAnnealing.length][2]; // handle temporary solution. if better than feasible, replace initial
+		  
+		  // copy timeslotHillClimbing to timeslotHillClimbingSementara
+		  for (int i = 0; i < timeslotSimulatedAnnealingSementara.length; i ++) {
+			  timeslotSimulatedAnnealingSementara[i][0] = timeslotSimulatedAnnealing[i][0]; // fill with course
+			  timeslotSimulatedAnnealingSementara[i][1] = timeslotSimulatedAnnealing[i][1]; // fill with timeslot
+		  }
+		  
+		  double penaltiInitialFeasible = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
+		  
+		  while (temperature > 1) {
+//			  System.out.println("Jumlah exam : " + jumlahexam);
+//			  System.out.println("Jumlah murid : " + jumlahmurid);
+			  try {
+				  randomCourse = randomNumber(0, jumlahexam); // random course
+				  randomTimeslot = randomNumber(1, schedule.getHowManyTimeSlot(timeslot)); // random timeslot
+				  timeslotSimulatedAnnealingSementara[randomCourse][1] = randomTimeslot;
+		   
+				  if (Schedule.checkRandomTimeslot(randomCourse, randomTimeslot, conflict_matrix, timeslotSimulatedAnnealing)) { 
+					  timeslotSimulatedAnnealingSementara[randomCourse][1] = randomTimeslot;
+					  double penaltiAfterHillClimbing = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid);
+		     
+					  // compare between penalti. replace initial with after if initial penalti is greater
+					  double randomNumber = randomDouble();
+					  if(penaltiInitialFeasible > penaltiAfterHillClimbing) {
+					      penaltiInitialFeasible = penaltiAfterHillClimbing;
+					      timeslotSimulatedAnnealing[randomCourse][1] = timeslotSimulatedAnnealingSementara[randomCourse][1];
+					  }
+					  	else if (acceptanceProbability(penaltiInitialFeasible, penaltiAfterHillClimbing, temperature) > randomNumber)
+					  		timeslotSimulatedAnnealing[randomCourse][1] = timeslotSimulatedAnnealingSementara[randomCourse][1];
+		    }  
+				temperature *= 1 - coolingrate;
+//		    	System.out.println("jadwaltemp ke " + randomCourseIndex);
+//		    	System.out.println("Random timeslot ke " + randomTimeslot);
+		    	System.out.println("pada temperatur " + temperature + " memiliki penalti : " + penaltiInitialFeasible);
+			  }
+		   		catch (ArrayIndexOutOfBoundsException e) {
+		   			//System.out.println("randomCourseIndex index ke- " + randomCourseIndex);
+		   			//System.out.println("randomTimeslot index ke- " + randomTimeslot);
+		   		}
+		  }
+		  
+		  // print updated timeslot
+		  System.out.println("\n================================================\n");
+		  for (int course_index = 0; course_index < jumlahexam; course_index++)
+			  System.out.println("Timeslot untuk course "+ timeslotSimulatedAnnealing[course_index][0] +" adalah timeslot: " + timeslotSimulatedAnnealing[course_index][1]);       
+		     
+		  System.out.println("\n================================================"); 
+		  System.out.println("Jumlah timeslot yang dibutuhkan untuk menjadwalkan " + jumlahexam + " course di file " + file + " adalah "+ Arrays.stream(timeslot).max().getAsInt() + " timeslot.");
+		  System.out.println("Penalti akhir : " + penaltiInitialFeasible); // print latest penalti
+	}
+		 
+	public int[][] getSimulatedAnnealing() { return timeslotSimulatedAnnealing; }
+		 
+	public void cobaSimmulatedAnnealing(double temperature, int iterasi) {
+		double coolingrate = 0.001;
+		Schedule schedule = new Schedule(file, conflict_matrix, jumlahexam);
+		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
+		
+		int[][] solusi = schedule.getSchedule();
+		int[][] timeslotSimulatedAnnealingSementara = solusi;
+		
+		int[][] best = schedule.getSchedule(); // initial feasible solution
+		
+		LowLevelHeuristics lowLevelHeuristics = new LowLevelHeuristics(timeslotSimulatedAnnealingSementara);
+		
+		double currentTemperature = temperature;
+		
+		for	(int i=0; i < iterasi; i++) {
+			int llh = randomNumber(1, 5);
+			int[][] timeslotLLH;
+			switch (llh) {
+				case 1:
+					timeslotLLH = lowLevelHeuristics.move(1);
+					break;
+				case 2:
+					timeslotLLH = lowLevelHeuristics.swap(2);
+					break;
+				case 3:
+					timeslotLLH = lowLevelHeuristics.move(2);
+					break;
+				case 4:
+					timeslotLLH = lowLevelHeuristics.swap(3);
+					break;
+				case 5:
+					timeslotLLH = lowLevelHeuristics.move(3);
+					break;
+				default:
+					timeslotLLH = lowLevelHeuristics.swap(1);
+					break;
+			}
+			
+			currentTemperature = currentTemperature * (1 - coolingrate);
+			if (Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid) < Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid)) {
+				timeslotSimulatedAnnealingSementara = Evaluator.copySolution(timeslotLLH);
+				if (Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid) < Evaluator.getPenalty(conflict_matrix, best, jumlahmurid)) {
+					best = Evaluator.copySolution(timeslotLLH);
+				}
+			}
+				else if (acceptanceProbability(Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid), Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid), temperature) > randomDouble()) {
+					timeslotSimulatedAnnealingSementara = Evaluator.copySolution(timeslotLLH);
+				}
+			
+			System.out.println("Iterasi: " + (i+1) + " memiliki penalty " + Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid));
+		}
+		
+		System.out.println("Penalty Terbaik : "+ Evaluator.getPenalty(conflict_matrix, best, jumlahmurid));
+		
+		timeslotSimulatedAnnealing = best;
+	}
 	private static int randomNumber(int min, int max) {
 		Random random = new Random();
 		return random.nextInt(max - min) + min;
