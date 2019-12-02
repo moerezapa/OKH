@@ -87,14 +87,14 @@ public class TimeTabling {
 		/*
 		 * use hill climbing for timesloting
 		 */
-		optimization.getTimeslotByHillClimbing(1000); // use hillclimbing methode for iterates 1000000 times
+		optimization.getTimeslotByHillClimbing(5000); // use hillclimbing methode for iterates 1000000 times
 		
 		/*
 		 * use simmulated annealing for timesloting
 		 */
 //		optimization.getSimmulatedAnnealing(100000);
 //		optimization.getTimeslotBySimulatedAnnealing();
-//		optimization.cobaSimmulatedAnnealing(1000, 1000);
+//		optimization.cobaSimmulatedAnnealing(1000, 5000);
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
