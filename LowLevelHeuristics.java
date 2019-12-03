@@ -2,11 +2,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class LowLevelHeuristics {
-	int[][] timeslot;
-	
-	LowLevelHeuristics(int[][] timeslot) { this.timeslot = timeslot; }
-	
-	public int[][] move(int jumlahmove) {
+
+	public static int[][] move(int[][] timeslot, int jumlahmove) {
 		int[][] timeslotSementara = timeslot;
 		int[] slot = new int[timeslotSementara.length];
 		
@@ -25,7 +22,7 @@ public class LowLevelHeuristics {
 		return timeslotSementara;
 	}
 	
-	public int[][] swap(int jumlahswap) {
+	public static int[][] swap(int[][] timeslot, int jumlahswap) {
 		int[][] timeslotSementara = timeslot;
 		
 		for(int i=0; i < jumlahswap; i++) {

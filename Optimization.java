@@ -252,56 +252,64 @@ public class Optimization {
 		timeslot = schedule.schedulingByDegree(course_sorted, timeslot);
 		
 		int[][] solusi = schedule.getSchedule();
-		int[][] timeslotSimulatedAnnealingSementara = solusi;
-		
+//		int[][] timeslotSimulatedAnnealingSementara = solusi;
+		int[][] timeslotSimulatedAnnealingSementara = Evaluator.copyTimeslot(solusi);
 		int[][] best = schedule.getSchedule(); // initial feasible solution
 		
-		LowLevelHeuristics lowLevelHeuristics = new LowLevelHeuristics(timeslotSimulatedAnnealingSementara);
+//		LowLevelHeuristics lowLevelHeuristics = new LowLevelHeuristics(timeslotSimulatedAnnealingSementara);
 		
 		double currentTemperature = temperature;
+		double penaltySementara = 0, penaltyLLH, penaltyBest = 0;
 		
 		for	(int i=0; i < iterasi; i++) {
 			int llh = randomNumber(1, 5);
 			int[][] timeslotLLH;
 			switch (llh) {
 				case 1:
-					timeslotLLH = lowLevelHeuristics.move(1);
+					timeslotLLH = LowLevelHeuristics.move(timeslotSimulatedAnnealingSementara, 1);
 					break;
 				case 2:
-					timeslotLLH = lowLevelHeuristics.swap(2);
+					timeslotLLH = LowLevelHeuristics.swap(timeslotSimulatedAnnealingSementara, 2);
 					break;
 				case 3:
-					timeslotLLH = lowLevelHeuristics.move(2);
+					timeslotLLH = LowLevelHeuristics.move(timeslotSimulatedAnnealingSementara, 2);
 					break;
 				case 4:
-					timeslotLLH = lowLevelHeuristics.swap(3);
+					timeslotLLH = LowLevelHeuristics.swap(timeslotSimulatedAnnealingSementara, 3);
 					break;
 				case 5:
-					timeslotLLH = lowLevelHeuristics.move(3);
+					timeslotLLH = LowLevelHeuristics.move(timeslotSimulatedAnnealingSementara, 3);
 					break;
 				default:
-					timeslotLLH = lowLevelHeuristics.swap(1);
+					timeslotLLH = LowLevelHeuristics.swap(timeslotSimulatedAnnealingSementara, 1);
 					break;
 			}
 			
 			currentTemperature = currentTemperature * (1 - coolingrate);
-			if (Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid) < Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid)) {
-				timeslotSimulatedAnnealingSementara = Evaluator.copySolution(timeslotLLH);
+			penaltyLLH = Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid);
+			if (Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid) <= Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid)) {
+				timeslotSimulatedAnnealingSementara = Evaluator.copyTimeslot(timeslotLLH);
+//				timeslotSimulatedAnnealingSementara = timeslotLLH; knapa cara kayak gini gabisa buat mindah array?
+				penaltySementara = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid);
 				if (Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid) < Evaluator.getPenalty(conflict_matrix, best, jumlahmurid)) {
-					best = Evaluator.copySolution(timeslotLLH);
+					best = Evaluator.copyTimeslot(timeslotLLH);
+//					best = timeslotLLH;
+					penaltyBest = Evaluator.getPenalty(conflict_matrix, best, jumlahmurid);
 				}
 			}
-				else if (acceptanceProbability(Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid), Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid), temperature) > randomDouble()) {
-					timeslotSimulatedAnnealingSementara = Evaluator.copySolution(timeslotLLH);
-				}
+				else if (acceptanceProbability(penaltySementara, penaltyLLH, temperature) > randomDouble())
+					timeslotSimulatedAnnealingSementara = Evaluator.copyTimeslot(timeslotLLH);
+//					timeslotSimulatedAnnealingSementara = timeslotLLH;
 			
 			System.out.println("Iterasi: " + (i+1) + " memiliki penalty " + Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid));
 		}
 		
-		System.out.println("Penalty Terbaik : "+ Evaluator.getPenalty(conflict_matrix, best, jumlahmurid));
+//		penaltyBest = Evaluator.getPenalty(conflict_matrix, best, jumlahmurid);
+		System.out.println("Penalty Terbaik : "+ penaltyBest);
 		
 		timeslotSimulatedAnnealing = best;
 	}
+	
 	private static int randomNumber(int min, int max) {
 		Random random = new Random();
 		return random.nextInt(max - min) + min;
