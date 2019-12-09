@@ -14,7 +14,7 @@ public class LowLevelHeuristics {
 		for (int i = 0; i < jumlahmove; i++) {
 			int randomCourse = randomNumber(1, timeslot.length);
 			int randomTimeSlot = randomNumber(1, Arrays.stream(slot).max().getAsInt());
-			//System.out.println("max slot: " + Arrays.stream(slot).max().getAsInt());
+//			System.out.println("min number to random: " + 1 + " and max number to random: " + Arrays.stream(slot).max().getAsInt() + ", dalam method nextInt : " + (Arrays.stream(slot).max().getAsInt()-1));
 			
 			timeslotSementara[randomCourse][1] = randomTimeSlot;
 		}
@@ -41,6 +41,17 @@ public class LowLevelHeuristics {
 	
 	private static int randomNumber(int min, int max) {
 		Random random = new Random();
-		return random.nextInt(max - min) + min;
+		try {
+			return random.nextInt(max - min) + min;	
+		}
+			catch(Exception e) {
+//				System.out.println("ERROR di nextInt: " + (max-min));
+				//return random.nextInt(Math.abs(max - min)) + min;
+				if (Math.abs(max - min) == 0) {
+					return random.nextInt(Math.abs(max - min)+1) + min;
+				}
+					else
+						return random.nextInt(Math.abs(max - min)) + min;
+			}
 	}
 }

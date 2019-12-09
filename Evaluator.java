@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class Evaluator {
 	
-	public static int[][] copyTimeslot(int[][] timeslot) {
+	public static int[][] getTimeslot(int[][] timeslot) {
 		int[][] copySolution = new int[timeslot.length][2];
 		
 		for(int i = 0; i < timeslot.length; i++) {

@@ -92,4 +92,9 @@ public class Course {
 		}
 		return course_sorted;
 	}
+	
+	public int[][] sortingBySaturation(int[][] conflictmatrix, int jumlahcourse) {
+		
+		return course_sorted;
+	}
 }
