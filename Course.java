@@ -94,6 +94,7 @@ public class Course {
 	}
 	
 	public int[][] sortingBySaturation(int[][] conflictmatrix, int jumlahcourse) {
+		course_sorted = new int[jumlahcourse][2];
 		
 		return course_sorted;
 	}

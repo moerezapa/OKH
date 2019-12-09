@@ -144,13 +144,13 @@ public class Optimization {
 		System.out.println("Timeslot yang dibutuhkan : " + Arrays.stream(timeslot).max().getAsInt() + "\n");
 		System.out.println("=============================================================");
 	}
+	public void getTimeslotBy() {
+		
+	}
 	
 	public int[][] getTimeslotHillClimbing() { return timeslotHillClimbing; }
 	public int[][] getTimeslotSimulatedAnnealing() { return timeslotSimulatedAnnealing; }
-	public int[][] getTimeslotBy() {
-		
-		return timeslotOtherMeta;
-	}
+	public int[][] getTimeslotMeta() { return timeslotOtherMeta; }
 	
 	private static int randomNumber(int min, int max) {
 		Random random = new Random();

@@ -62,6 +62,25 @@ public class Schedule {
 		return this.timeslot;
     }
 	
+	public int[] schedulingBySaturationDegree(int [][] sortedCourse, int[] timeslot) {
+    	this.timeslot = new int[jumlahexam];
+    	timeslotindex = 1; // starting timeslot from 1
+    	for(int i= 0; i < sortedCourse.length; i++)
+    		this.timeslot[i] = 0;
+    	
+		for(int course = 0; course < sortedCourse.length; course++) {
+			for (int time_slotindex = 1; time_slotindex <= timeslotindex; time_slotindex++) {
+				if(isTimeslotAvailableWithSaturation(course, time_slotindex, conflictmatrix, sortedCourse, this.timeslot)) {
+					this.timeslot[sortedCourse[course][0]-1] = time_slotindex;
+					break;
+				}
+					else
+						timeslotindex = timeslotindex+1; // move to ts+1 if ts is crash
+			}
+		}
+		return this.timeslot;
+    }
+	
 	public int getHowManyTimeSlot(int[] timeslot) { return Arrays.stream(timeslot).max().getAsInt(); }
 	
 	public static boolean isTimeslotAvailable(int course, int timeslot, int[][] conflictmatrix, int[] timeslotarray) {
@@ -72,6 +91,14 @@ public class Schedule {
 		return true;
 	}
     public static boolean isTimeslotAvailableWithSorted(int course, int timeslot, int[][] conflictmatrix, int[][] sortedmatrix, int[] timeslotarray) {
+		for(int i = 0; i < sortedmatrix.length; i++) 
+			if(conflictmatrix[sortedmatrix[course][0]-1][i] != 0 && timeslotarray[i] == timeslot) {
+				return false;
+			}
+		
+		return true;
+	}
+    public static boolean isTimeslotAvailableWithSaturation(int course, int timeslot, int[][] conflictmatrix, int[][] sortedmatrix, int[] timeslotarray) {
 		for(int i = 0; i < sortedmatrix.length; i++) 
 			if(conflictmatrix[sortedmatrix[course][0]-1][i] != 0 && timeslotarray[i] == timeslot) {
 				return false;
