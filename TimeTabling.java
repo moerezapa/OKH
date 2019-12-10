@@ -87,7 +87,7 @@ public class TimeTabling {
 		 * use hill climbing for timesloting
 		 * params: iterations
 		 */
-		optimization.getTimeslotByHillClimbing(1000); // use hillclimbing methode for iterates 1000000 times
+//		optimization.getTimeslotByHillClimbing(1000); // use hillclimbing methode for iterates 1000000 times
 		
 		/*
 		 * use simmulated annealing for timesloting
@@ -95,10 +95,19 @@ public class TimeTabling {
 		 * params 2: iterations
 		 */
 //		optimization.getTimeslotBySimulatedAnnealing(100, 1000);
+		
+		/*
+		 * use tabu search for timeslotting
+		 * params: iteration
+		 */
+		optimization.getTimeslotByTabuSearch(1000);
 		long endtime = System.nanoTime();
 		// end time
 		double runningtime = (double) (endtime - starttime)/1000000000;
-		
+//		int[][] hc = optimization.getTimeslotHillClimbing();
+//		int[][] sa = optimization.getTimeslotSimulatedAnnealing();
+//		System.out.println("Penalti Hill Climbing 		: " + Evaluator.getPenalty(conflict_matrix, hc, jumlahmurid));
+//		System.out.println("Penalti Simulated Annealing : " + Evaluator.getPenalty(conflict_matrix, sa, jumlahmurid));
 		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
 		
 //		hasil_timeslot = optimization.getTimeslotHillClimbing();

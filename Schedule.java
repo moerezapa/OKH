@@ -3,7 +3,7 @@ import java.util.Arrays;
 public class Schedule {
 	
 	String file;
-	int[][] conflictmatrix, timeslotSchedule;
+	int[][] conflictmatrix;
 	int[] timeslot;
 	int jumlahexam;
 	int timeslotindex;
@@ -17,24 +17,24 @@ public class Schedule {
 	
 	public int[][] getSchedule() {
 		// fill hasiltimeslot array
-		timeslotSchedule = new int[jumlahexam][2];
+		int [][] timeslotSchedule = new int[jumlahexam][2];
     	for (int course = 0; course < jumlahexam; course++) {
     		timeslotSchedule[course][0] = (course+1);
     		timeslotSchedule[course][1] = timeslot[course];
     	}
-		return this.timeslotSchedule; 
+		return timeslotSchedule; 
 	}
 	
 	public int[] scheduling(int[] timeslot) {
-		timeslot = new int[jumlahexam];
+		this.timeslot = new int[jumlahexam];
 		timeslotindex = 1;
     	for(int i= 0; i < conflictmatrix.length; i++)
-    		timeslot[i] = 0;
+    		this.timeslot[i] = 0;
     	
 		for(int i = 0; i < conflictmatrix.length; i++) {
 			for (int j = 1; j <= timeslotindex; j++) {
 				if(isTimeslotAvailable(i, j, conflictmatrix, timeslot)) {
-					timeslot[i] = j;
+					this.timeslot[i] = j;
 					break;
 				}
 					else
@@ -43,7 +43,7 @@ public class Schedule {
 		}
 		return this.timeslot;
 	}
-	public int[] schedulingByDegree(int [][] sortedCourse, int[] timeslot) {
+	public int[] schedulingByDegree(int [][] sortedCourse) {
     	this.timeslot = new int[jumlahexam];
     	timeslotindex = 1; // starting timeslot from 1
     	for(int i= 0; i < sortedCourse.length; i++)
@@ -117,6 +117,12 @@ public class Schedule {
     public static boolean checkRandomTimeslotForSA(int courseSwap1, int courseSwap2, int timeslotpos1, int timeslotpos2, int[][] conflict_matrix, int[][] jadwal){
         for(int i=0; i<conflict_matrix.length; i++)
             if((conflict_matrix[courseSwap2][i] !=0 && jadwal[i][1]==timeslotpos1) && (conflict_matrix[courseSwap1][i] !=0 && jadwal[i][1]==timeslotpos2))
+                return false;
+        return true;              
+    }
+    public static boolean checkRandomTimeslotForLLH(int randomCourse, int randomTimeslot, int[][] conflict_matrix, int[][] jadwal){
+        for(int i=0; i<conflict_matrix.length; i++)
+            if(conflict_matrix[randomCourse][i] !=0 && jadwal[i][1]==randomTimeslot)
                 return false;
         return true;              
     }
