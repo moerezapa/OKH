@@ -37,16 +37,11 @@ public class LowLevelHeuristics {
 		}
 		
 		
-//			int randomCourse = randomNumber(1, timeslot.length);
-//			int randomTimeSlot = randomNumber(1, Arrays.stream(slot).max().getAsInt());
-			int randomCourse = random(timeslot.length);
-			int randomTimeSlot = random(Arrays.stream(slot).max().getAsInt());
-			System.out.println("number timeslot to random: " + randomTimeSlot);
-			if (Schedule.checkRandomTimeslotForLLH(randomCourse, randomTimeSlot, conflict_matrix, timeslot)) {
-				timeslotSementara[randomCourse][1] = randomTimeSlot;
-			}
-			
-		
+		int randomCourse = random(timeslot.length);
+		int randomTimeSlot = random(Arrays.stream(slot).max().getAsInt());
+//		System.out.println("number timeslot to random: " + randomTimeSlot);
+		if (Schedule.checkRandomTimeslot(randomCourse, randomTimeSlot, conflict_matrix, timeslot))
+			timeslotSementara[randomCourse][1] = randomTimeSlot;
 		
 		return timeslotSementara;
 	}
@@ -58,20 +53,16 @@ public class LowLevelHeuristics {
 			slot[i] = timeslotSementara[i][1];
 		}
 		
-		
-//			int randomCourse = randomNumber(1, timeslot.length);
-//			int randomTimeSlot = randomNumber(1, Arrays.stream(slot).max().getAsInt());
-			int randomCourse1 = random(timeslot.length);
-			int randomCourse2 = random(timeslot.length);
-			int randomTimeSlot1 = random(Arrays.stream(slot).max().getAsInt());
-			int randomTimeSlot2 = random(Arrays.stream(slot).max().getAsInt());
-			System.out.println("number timeslot to random: " + randomTimeSlot1 + " , " + randomTimeSlot2);
-			if (Schedule.checkRandomTimeslotForLLH(randomCourse1, randomTimeSlot1, conflict_matrix, timeslot)) {
-				timeslotSementara[randomCourse1][1] = randomTimeSlot1;
-			}
-			if (Schedule.checkRandomTimeslotForLLH(randomCourse2, randomTimeSlot2, conflict_matrix, timeslot)) {
-				timeslotSementara[randomCourse2][1] = randomTimeSlot2;
-			}
+		int randomCourse1 = random(timeslot.length);
+		int randomCourse2 = random(timeslot.length);
+		int randomTimeSlot1 = random(Arrays.stream(slot).max().getAsInt());
+		int randomTimeSlot2 = random(Arrays.stream(slot).max().getAsInt());
+//		System.out.println("number timeslot to random: " + randomTimeSlot1 + " , " + randomTimeSlot2);
+		if (Schedule.checkRandomTimeslot(randomCourse1, randomTimeSlot1, conflict_matrix, timeslot))
+			timeslotSementara[randomCourse1][1] = randomTimeSlot1;
+	
+		if (Schedule.checkRandomTimeslot(randomCourse2, randomTimeSlot2, conflict_matrix, timeslot))
+			timeslotSementara[randomCourse2][1] = randomTimeSlot2;
 		
 		return timeslotSementara;
 	}
@@ -83,25 +74,22 @@ public class LowLevelHeuristics {
 			slot[i] = timeslotSementara[i][1];
 		}
 		
+		int randomCourse1 = random(timeslot.length);
+		int randomCourse2 = random(timeslot.length);
+		int randomCourse3 = random(timeslot.length);
+		int randomTimeSlot1 = random(Arrays.stream(slot).max().getAsInt());
+		int randomTimeSlot2 = random(Arrays.stream(slot).max().getAsInt());
+		int randomTimeSlot3 = random(Arrays.stream(slot).max().getAsInt());
+//		System.out.println("number timeslot to random: " + randomTimeSlot1 + " , " + randomTimeSlot2 + " , " + randomTimeSlot3);
+		if (Schedule.checkRandomTimeslot(randomCourse1, randomTimeSlot1, conflict_matrix, timeslot))
+			timeslotSementara[randomCourse1][1] = randomTimeSlot1;
 		
-//			int randomCourse = randomNumber(1, timeslot.length);
-//			int randomTimeSlot = randomNumber(1, Arrays.stream(slot).max().getAsInt());
-			int randomCourse1 = random(timeslot.length);
-			int randomCourse2 = random(timeslot.length);
-			int randomCourse3 = random(timeslot.length);
-			int randomTimeSlot1 = random(Arrays.stream(slot).max().getAsInt());
-			int randomTimeSlot2 = random(Arrays.stream(slot).max().getAsInt());
-			int randomTimeSlot3 = random(Arrays.stream(slot).max().getAsInt());
-			System.out.println("number timeslot to random: " + randomTimeSlot1 + " , " + randomTimeSlot2 + " , " + randomTimeSlot3);
-			if (Schedule.checkRandomTimeslotForLLH(randomCourse1, randomTimeSlot1, conflict_matrix, timeslot)) {
-				timeslotSementara[randomCourse1][1] = randomTimeSlot1;
-			}
-			if (Schedule.checkRandomTimeslotForLLH(randomCourse2, randomTimeSlot2, conflict_matrix, timeslot)) {
-				timeslotSementara[randomCourse2][1] = randomTimeSlot2;
-			}
-			if (Schedule.checkRandomTimeslotForLLH(randomCourse3, randomTimeSlot3, conflict_matrix, timeslot)) {
-				timeslotSementara[randomCourse3][1] = randomTimeSlot3;
-			}
+		if (Schedule.checkRandomTimeslot(randomCourse2, randomTimeSlot2, conflict_matrix, timeslot))
+			timeslotSementara[randomCourse2][1] = randomTimeSlot2;
+		
+		if (Schedule.checkRandomTimeslot(randomCourse3, randomTimeSlot3, conflict_matrix, timeslot))
+			timeslotSementara[randomCourse3][1] = randomTimeSlot3;
+		
 		return timeslotSementara;
 	}
 	
@@ -125,22 +113,19 @@ public class LowLevelHeuristics {
 		int[][] timeslotSementara = timeslot;
 		
 		
-		int randomcourse1 = randomNumber(0, timeslot.length);
-		int randomcourse2 = randomNumber(0, timeslot.length);
+		int randomcourse1 = random(timeslot.length);
+		int randomcourse2 = random(timeslot.length);
 		while (randomcourse2 == randomcourse1) {
-			randomcourse2 = randomNumber(0, timeslot.length);
+			randomcourse2 = random(timeslot.length);
 		}
 		
 		int slot1 = timeslot[randomcourse1][1];
 		int slot2 = timeslot[randomcourse2][1];
-			
-//		timeslotSementara[randomcourse1][1] = slot2;
-//		timeslotSementara[randomcourse2][1] = slot1;
 		
-		if (Schedule.checkRandomTimeslotForLLH(randomcourse1, slot2, conflict_matrix, timeslot)) {
+		if (Schedule.checkRandomTimeslot(randomcourse1, slot2, conflict_matrix, timeslot)) {
 			timeslotSementara[randomcourse1][1] = slot2;
 		}
-		if (Schedule.checkRandomTimeslotForLLH(randomcourse2, slot1, conflict_matrix, timeslot)) {
+		if (Schedule.checkRandomTimeslot(randomcourse2, slot1, conflict_matrix, timeslot)) {
 			timeslotSementara[randomcourse2][1] = slot1;
 		}
 		return timeslotSementara;
@@ -150,9 +135,9 @@ public class LowLevelHeuristics {
 		
 		int randomcourse1, randomcourse2, randomcourse3;
 		do {
-			randomcourse1 = randomNumber(0, timeslot.length);
-			randomcourse2 = randomNumber(0, timeslot.length);
-			randomcourse3 = randomNumber(0, timeslot.length);
+			randomcourse1 = random(timeslot.length);
+			randomcourse2 = random(timeslot.length);
+			randomcourse3 = random(timeslot.length);
 		} while (randomcourse2 == randomcourse1 || randomcourse2 == randomcourse3 || randomcourse1 == randomcourse3);
 		
 		int slot1 = timeslot[randomcourse1][1];
@@ -162,13 +147,13 @@ public class LowLevelHeuristics {
 //		timeslotSementara[randomcourse1][1] = slot2;
 //		timeslotSementara[randomcourse2][1] = slot1;
 		
-		if (Schedule.checkRandomTimeslotForLLH(randomcourse1, slot2, conflict_matrix, timeslot)) {
+		if (Schedule.checkRandomTimeslot(randomcourse1, slot2, conflict_matrix, timeslot)) {
 			timeslotSementara[randomcourse1][1] = slot2;
 		}
-		if (Schedule.checkRandomTimeslotForLLH(randomcourse2, slot3, conflict_matrix, timeslot)) {
+		if (Schedule.checkRandomTimeslot(randomcourse2, slot3, conflict_matrix, timeslot)) {
 			timeslotSementara[randomcourse2][1] = slot3;
 		}
-		if (Schedule.checkRandomTimeslotForLLH(randomcourse3, slot1, conflict_matrix, timeslot)) {
+		if (Schedule.checkRandomTimeslot(randomcourse3, slot1, conflict_matrix, timeslot)) {
 			timeslotSementara[randomcourse3][1] = slot1;
 		}
 		return timeslotSementara;

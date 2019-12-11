@@ -81,8 +81,25 @@ public class Schedule {
 		return this.timeslot;
     }
 	
-	public int getHowManyTimeSlot(int[] timeslot) { return Arrays.stream(timeslot).max().getAsInt(); }
+	public int getHowManyTimeSlot(int[] timeslot) { 
+		int jumlah_timeslot = 0;
+		
+		for(int i = 0; i < timeslot.length; i++) {
+			if(timeslot[i] > jumlah_timeslot)
+				jumlah_timeslot = timeslot[i];
+		}
+		return jumlah_timeslot; 
+	}
 	
+	public int getJumlahTimeSlot(int[][] timeslot) { 
+		int jumlah_timeslot = 0;
+		
+		for(int i = 0; i < timeslot.length; i++) {
+			if(timeslot[i][1] > jumlah_timeslot)
+				jumlah_timeslot = timeslot[i][1];
+		}
+		return jumlah_timeslot; 
+	}
 	public static boolean isTimeslotAvailable(int course, int timeslot, int[][] conflictmatrix, int[] timeslotarray) {
 		for(int i = 0; i < conflictmatrix.length; i++)
 			if(conflictmatrix[course][i] != 0 && timeslotarray[i] == timeslot)
@@ -114,12 +131,6 @@ public class Schedule {
         return true;              
     }
     
-    public static boolean checkRandomTimeslotForSA(int courseSwap1, int courseSwap2, int timeslotpos1, int timeslotpos2, int[][] conflict_matrix, int[][] jadwal){
-        for(int i=0; i<conflict_matrix.length; i++)
-            if((conflict_matrix[courseSwap2][i] !=0 && jadwal[i][1]==timeslotpos1) && (conflict_matrix[courseSwap1][i] !=0 && jadwal[i][1]==timeslotpos2))
-                return false;
-        return true;              
-    }
     public static boolean checkRandomTimeslotForLLH(int randomCourse, int randomTimeslot, int[][] conflict_matrix, int[][] jadwal){
         for(int i=0; i<conflict_matrix.length; i++)
             if(conflict_matrix[randomCourse][i] !=0 && jadwal[i][1]==randomTimeslot)

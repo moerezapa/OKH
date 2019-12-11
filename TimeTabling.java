@@ -81,34 +81,47 @@ public class TimeTabling {
 		// sort exam by degree
 		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
 		
-		long starttime = System.nanoTime();
-		Optimization optimization = new Optimization(file, conflict_matrix, course_sorted, jumlahexam, jumlahmurid);
+		/*
+		 * params 1: file to be scheduling
+		 * params 2: conflict matrix from file
+		 * params 3: sort course by degree
+		 * params 4: how many course from file
+		 * params 5: how many student from file
+		 * params 6: how many iterations
+		 */
+		Optimization optimization = new Optimization(file, conflict_matrix, course_sorted, jumlahexam, jumlahmurid, 1000);
 		/*
 		 * use hill climbing for timesloting
-		 * params: iterations
 		 */
-//		optimization.getTimeslotByHillClimbing(1000); // use hillclimbing methode for iterates 1000000 times
+		long starttimeHC = System.nanoTime();
+		optimization.getTimeslotByHillClimbing1(); // use hillclimbing methode for iterates 1000000 times
+		long endtimeHC = System.nanoTime();
 		
 		/*
 		 * use simmulated annealing for timesloting
-		 * params 1: temperature
-		 * params 2: iterations
+		 * params : temperature
 		 */
-//		optimization.getTimeslotBySimulatedAnnealing(100, 1000);
-		
+		long starttimeSA = System.nanoTime();
+		optimization.getTimeslotBySimulatedAnnealing(100);
+		long endtimeSA = System.nanoTime();
 		/*
 		 * use tabu search for timeslotting
-		 * params: iteration
 		 */
-		optimization.getTimeslotByTabuSearch(1000);
-		long endtime = System.nanoTime();
+		long starttimeTS = System.nanoTime();
+		optimization.getTimeslotByTabuSearch();
+		long endtimeTS = System.nanoTime();
 		// end time
-		double runningtime = (double) (endtime - starttime)/1000000000;
-//		int[][] hc = optimization.getTimeslotHillClimbing();
-//		int[][] sa = optimization.getTimeslotSimulatedAnnealing();
-//		System.out.println("Penalti Hill Climbing 		: " + Evaluator.getPenalty(conflict_matrix, hc, jumlahmurid));
-//		System.out.println("Penalti Simulated Annealing : " + Evaluator.getPenalty(conflict_matrix, sa, jumlahmurid));
-		System.out.println("Waktu eksekusi yang dibutuhkan adalah selama " + runningtime + " detik.");
+		System.out.println("Timeslot dibutuhkan (menggunakan Hill Climbing) 		: " + optimization.getJumlahTimeslotHC());
+		System.out.println("Penalti Hill Climbing 						: " + Evaluator.getPenalty(conflict_matrix, optimization.getTimeslotHillClimbing(), jumlahmurid));
+		System.out.println("Waktu eksekusi yang dibutuhkan Hill Climbing " + ((double) (endtimeHC - starttimeHC)/1000000000) + " detik.\n");
+		
+		System.out.println("Timeslot dibutuhkan (menggunakan Simulated Annealing) 		: " + optimization.getJumlahTimeslotSimulatedAnnealing());
+		System.out.println("Penalti Simulated Annealing 					: " + Evaluator.getPenalty(conflict_matrix, optimization.getTimeslotSimulatedAnnealing(), jumlahmurid));
+		System.out.println("Waktu eksekusi yang dibutuhkan Simmulated Annealing " + ((double) (endtimeSA - starttimeSA)/1000000000) + " detik.\n");
+		
+		System.out.println("Timeslot dibutuhkan (menggunakan Tabu Search) 			: " + optimization.getJumlahTimeslotTabuSearch());
+		System.out.println("Penalti Tabu Search 						: " + Evaluator.getPenalty(conflict_matrix, optimization.getTimeslotTabuSearch(), jumlahmurid));
+		System.out.println("Waktu eksekusi yang dibutuhkan Tabu Search " + ((double) (endtimeTS - starttimeTS)/1000000000) + " detik.");
 		
 //		hasil_timeslot = optimization.getTimeslotHillClimbing();
 //		hasil_timeslot = optimization.getTimeslotSimulatedAnnealing();
