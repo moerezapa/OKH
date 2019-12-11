@@ -4,18 +4,15 @@ import java.io.IOException;
 
 public class Course {
 	
-	int jumlahcourse, degree, jumlahmurid;
-	int[][] conflict_matrix;
-	int[][] course_sorted;
-	int[][] course_degree;
-	int[][] max;
+	int jumlahmurid;
+
 	String fileInput;
 	
 	public Course(String fileInput) { this.fileInput = fileInput; }
 	
 	public int getJumlahMurid() { return this.jumlahmurid; }
-	
 	public int getJumlahCourse() throws IOException {
+		int jumlahcourse = 0;
 		// read course file
 		BufferedReader readCourse = new BufferedReader(new FileReader(fileInput + ".crs"));
 			while (readCourse.readLine() != null) 
@@ -27,7 +24,7 @@ public class Course {
 	
 	public int[][] getConflictMatrix() throws IOException {
 		// fill dataset array
-		conflict_matrix = new int[getJumlahCourse()][getJumlahCourse()];
+		int[][] conflict_matrix = new int[getJumlahCourse()][getJumlahCourse()];
      	for (int i=0; i<conflict_matrix.length; i++)
      		for(int j=0; j<conflict_matrix.length; j++)
      			conflict_matrix[i][j] = 0;
@@ -52,8 +49,8 @@ public class Course {
 	}
 	
 	public int [][] sortingByDegree(int[][] conflictmatrix, int jumlahcourse) {
-		course_degree = new int [jumlahcourse][2];
-		
+		int[][] course_degree = new int [jumlahcourse][2];
+		int degree = 0;
 		for (int i=0; i<course_degree.length; i++)
 			for (int j=0; j<course_degree[0].length; j++)
 				course_degree[i][0] = i+1; // fill course_sorted column 1 with course index
@@ -68,11 +65,11 @@ public class Course {
 			degree=0;
 		}
     	// sorting by degree
-    	max = new int[1][2]; // make max array with 1 row 2 column. untuk ngehandle degree
+    	int[][] max = new int[1][2]; // make max array with 1 row 2 column. untuk ngehandle degree
     	max[0][0] = -1;
 		max[0][1] = -1;
 		int x = 0;
-		course_sorted = new int[jumlahcourse][2];
+		int[][] course_sorted = new int[jumlahcourse][2];
 		
 		for(int a=0; a<course_degree.length; a++) {
 			for(int i=0; i<course_degree.length; i++) {
@@ -93,9 +90,9 @@ public class Course {
 		return course_sorted;
 	}
 	
-	public int[][] sortingBySaturation(int[][] conflictmatrix, int jumlahcourse) {
+	/*public int[][] sortingBySaturation(int[][] conflictmatrix, int jumlahcourse) {
 		course_sorted = new int[jumlahcourse][2];
 		
 		return course_sorted;
-	}
+	}*/
 }

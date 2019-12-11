@@ -24,7 +24,7 @@ public class TimeTabling {
         int pilih = scanner.nextInt();
         
         String filePilihanInput = namafile[pilih-1][0];
-        //String filePilihanOutput = namafile[pilih-1][1];
+        String filePilihanOutput = namafile[pilih-1][1];
         
         String file = folderDataset + filePilihanInput;
         
@@ -102,7 +102,7 @@ public class TimeTabling {
 		 * params : temperature
 		 */
 		long starttimeSA = System.nanoTime();
-		optimization.getTimeslotBySimulatedAnnealing(100);
+		optimization.getTimeslotBySimulatedAnnealing(100.0);
 		long endtimeSA = System.nanoTime();
 		/*
 		 * use tabu search for timeslotting
@@ -123,9 +123,10 @@ public class TimeTabling {
 		System.out.println("Penalti Tabu Search 						: " + Evaluator.getPenalty(conflict_matrix, optimization.getTimeslotTabuSearch(), jumlahmurid));
 		System.out.println("Waktu eksekusi yang dibutuhkan Tabu Search " + ((double) (endtimeTS - starttimeTS)/1000000000) + " detik.");
 		
+//		double[] penaltyList = optimization.getTabuSearchPenaltyList();
 //		hasil_timeslot = optimization.getTimeslotHillClimbing();
 //		hasil_timeslot = optimization.getTimeslotSimulatedAnnealing();
-//		writeSolFile(hasil_timeslot, filePilihanOutput);
+//		writePenaltyListFile(penaltyList, filePilihanOutput);
     }
     
     public static void writeSolFile(int[][] hasiltimeslot, String namaFileOutput) throws IOException {
@@ -140,5 +141,19 @@ public class TimeTabling {
         writer.close();
         
 		System.out.println("\nFile penjadwalan " + namaFileOutput+ " berhasil dibuat");
+	}
+    
+    public static void writePenaltyListFile(double[] penaltyList, String namaFileOutput) throws IOException {
+    	String directoryOutput = "C:/Users/ZAP/Google Drive/KULIAH/OKH/Tugas/UAS/" + namaFileOutput +".txt";
+        FileWriter writer = new FileWriter(directoryOutput, true);
+        
+        for (int j = 0; j < penaltyList.length; j++) {
+            writer.write(penaltyList[j]+ " ");
+            writer.write("\n");
+//        	System.out.println(penaltyList[j]);
+        }
+        writer.close();
+        
+		System.out.println("\nFile list penalty " + namaFileOutput+ " berhasil dibuat");
 	}
 }

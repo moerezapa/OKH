@@ -5,9 +5,7 @@ public class Schedule {
 	String file;
 	int[][] conflictmatrix;
 	int[] timeslot;
-	int jumlahexam;
-	int timeslotindex;
-	int timeslotmax;
+	int jumlahexam, timeslotindex;
 	
 	public Schedule(String file, int[][] conflictmatrix, int jumlahexam) {
 		this.file = file;

@@ -5,8 +5,9 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class Optimization {
-	int[][] timeslotHillClimbing, timeslotSimulatedAnnealing, timeslotTabuSearch, conflict_matrix, course_sorted;
+	int[][] timeslotHillClimbing, timeslotSimulatedAnnealing, timeslotTabuSearch, tabuSearchPenaltyList, conflict_matrix, course_sorted;
 	int[] timeslot;
+	double[] tabuSearchPenaltyList1;
 	String file;
 	int jumlahexam, jumlahmurid, randomCourse, randomTimeslot, iterasi;
 	double initialPenalty, bestPenalty, deltaPenalty;
@@ -155,8 +156,8 @@ public class Optimization {
 		deltaPenalty = ((initialPenalty-bestPenalty)/initialPenalty)*100;
 		// print updated timeslot
 		System.out.println("\n================================================\n");
-    	for (int course_index = 0; course_index < jumlahexam; course_index++)
-    		System.out.println("Timeslot untuk course "+ timeslotHillClimbing[course_index][0] +" adalah timeslot: " + timeslotHillClimbing[course_index][1]);       
+//    	for (int course_index = 0; course_index < jumlahexam; course_index++)
+//    		System.out.println("Timeslot untuk course "+ timeslotHillClimbing[course_index][0] +" adalah timeslot: " + timeslotHillClimbing[course_index][1]);       
     	System.out.println("=============================================================");
 		System.out.println("		Metode HILL CLIMBING								 "); // print best penalty
 		System.out.println("\nPenalty Initial : "+ initialPenalty); // print initial penalty
@@ -206,6 +207,7 @@ public class Optimization {
 			
 //			temperature = temperature * (1 - coolingrate);
 //			temperature = temperature - coolingrate;
+			System.out.println("Suhu : " + temperature);
 			if (Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid) <= Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid)) {
 				timeslotSimulatedAnnealingSementara = Evaluator.getTimeslot(timeslotLLH);
 				if (Evaluator.getPenalty(conflict_matrix, timeslotLLH, jumlahmurid) <= Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid)) {
@@ -219,7 +221,7 @@ public class Optimization {
 //			System.out.println("temperature : " + currentTemperature);
 			// print current penalty of each iteration
 			System.out.println("Iterasi: " + (i+1) + " memiliki penalty " + Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid));
-			temperature = temperature - coolingrate;
+			temperature *= 1 - coolingrate;
 		}
 //		bestPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
 		deltaPenalty = ((initialPenalty-bestPenalty)/initialPenalty)*100;
@@ -282,7 +284,7 @@ public class Optimization {
 //            search candidate solution / search neighbor
 //            sneighborhood = getneighbor(bestcandidate)
            ArrayList<int[][]> sneighborhood = new ArrayList<>();
-                
+//           ArrayList<Double> listPenalty = new ArrayList<>();     
               
 //        		int[][] timeslotLLH;
         	LowLevelHeuristics lowLevelHeuristics = new LowLevelHeuristics(conflict_matrix);
@@ -321,10 +323,17 @@ public class Optimization {
               tabulist.removeFirst();
                 
            //return sbest;
-                
-           if ((iteration+1)%10 == 0) 
+           tabuSearchPenaltyList1 = new double[100];
+           if ((iteration+1)%10 == 0) {
                System.out.println("Iterasi: " + (iteration+1) + " memiliki penalty " + Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid));
-              
+//               listPenalty.add(Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid));
+//               tabuSearchPenaltyList1[iteration] = Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid);
+//               tabuSearchPenaltyList1[iteration+1][1] = Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid);
+           }
+//           for (int i = 0 ; i < iteration; i ++) {
+//        	   tabuSearchPenaltyList1[i] = listPenalty.get(i);
+//           }
+           
            if (iteration == maxiteration) 
         	   terminate = true;
         }
@@ -349,6 +358,10 @@ public class Optimization {
 	public int getJumlahTimeslotHC() { return schedule.getJumlahTimeSlot(timeslotHillClimbing); }
 	public int getJumlahTimeslotSimulatedAnnealing() { return schedule.getJumlahTimeSlot(timeslotSimulatedAnnealing); }
 	public int getJumlahTimeslotTabuSearch() { return schedule.getJumlahTimeSlot(timeslotTabuSearch); }
+	
+	public double[] getTabuSearchPenaltyList() { 
+		return tabuSearchPenaltyList1;
+	}
 	
 	private static int randomNumber(int min, int max) {
 		Random random = new Random();
