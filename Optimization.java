@@ -28,20 +28,15 @@ public class Optimization {
 		schedule = new Schedule(file, conflict_matrix, jumlahexam);
 		timeslot = schedule.schedulingByDegree(course_sorted);
 		
-		//schedule.printSchedule();
 		int[][] initialTimeslot = schedule.getSchedule(); // get initial solution
 		timeslotHillClimbing = Evaluator.getTimeslot(initialTimeslot);
 		initialPenalty = Evaluator.getPenalty(conflict_matrix, initialTimeslot, jumlahmurid);
+		
+		int[][] timeslotHillClimbingSementara = Evaluator.getTimeslot(timeslotHillClimbing); // handle temporary solution. if better than feasible, replace initial
+		
 		bestPenalty = Evaluator.getPenalty(conflict_matrix, timeslotHillClimbing, jumlahmurid);
-		int[][] timeslotHillClimbingSementara = new int[timeslotHillClimbing.length][2]; // handle temporary solution. if better than feasible, replace initial
-		
-		timeslotHillClimbingSementara = Evaluator.getTimeslot(timeslotHillClimbing);
-		
-		double bestPenalty = Evaluator.getPenalty(conflict_matrix, timeslotHillClimbing, jumlahmurid);
 		
 		for(int i = 0; i < iterasi; i++) {
-			//System.out.println("Jumlah exam : " + jumlahexam);
-			//System.out.println("Jumlah murid : " + jumlahmurid);
 			try {
 				randomCourse = random(jumlahexam); // random course
 				randomTimeslot = random(schedule.getJumlahTimeSlot(initialTimeslot)); // random timeslot
@@ -51,7 +46,7 @@ public class Optimization {
 					timeslotHillClimbingSementara[randomCourse][1] = randomTimeslot;
 					double penaltiAfterHillClimbing = Evaluator.getPenalty(conflict_matrix, timeslotHillClimbingSementara, jumlahmurid);
 					
-					// compare between penalti. replace initial with after if initial penalti is greater
+					// compare between penalti. replace bestPenalty with penaltiAfterHillClimbing if initial penalti is greater
 					if(bestPenalty > penaltiAfterHillClimbing) {
 						bestPenalty = Evaluator.getPenalty(conflict_matrix, timeslotHillClimbingSementara, jumlahmurid);
 						timeslotHillClimbing[randomCourse][1] = timeslotHillClimbingSementara[randomCourse][1];
@@ -59,8 +54,6 @@ public class Optimization {
 						else 
 							timeslotHillClimbingSementara[randomCourse][1] = timeslotHillClimbing[randomCourse][1];
 				}
-				//System.out.println("jadwaltemp ke " + randomCourseIndex);
-				//System.out.println("Random timeslot ke " + randomTimeslot);
 				System.out.println("Iterasi ke " + (i+1) + " memiliki penalti : "+ bestPenalty);
 			}
 				catch (ArrayIndexOutOfBoundsException e) {
@@ -73,9 +66,9 @@ public class Optimization {
 		deltaPenalty = ((initialPenalty-bestPenalty)/initialPenalty)*100;
 		
 		// print updated timeslot
-		System.out.println("\n================================================\n");
-    	for (int course_index = 0; course_index < jumlahexam; course_index++)
-    		System.out.println("Timeslot untuk course "+ timeslotHillClimbing[course_index][0] +" adalah timeslot: " + timeslotHillClimbing[course_index][1]);       
+//		System.out.println("\n================================================\n");
+//    	for (int course_index = 0; course_index < jumlahexam; course_index++)
+//    		System.out.println("Timeslot untuk course "+ timeslotHillClimbing[course_index][0] +" adalah timeslot: " + timeslotHillClimbing[course_index][1]);       
     	System.out.println("=============================================================");
 		System.out.println("		Metode HILL CLIMBING								 "); // print best penalty
 		System.out.println("\nPenalty Initial : "+ initialPenalty); // print initial penalty
@@ -94,16 +87,14 @@ public class Optimization {
 		int[][] initialTimeslot = schedule.getSchedule(); // get initial solution
 		timeslotHillClimbing = Evaluator.getTimeslot(initialTimeslot);
 		initialPenalty = Evaluator.getPenalty(conflict_matrix, initialTimeslot, jumlahmurid);
-		bestPenalty = Evaluator.getPenalty(conflict_matrix, initialTimeslot, jumlahmurid);
+//		bestPenalty = Evaluator.getPenalty(conflict_matrix, initialTimeslot, jumlahmurid);
 		int[][] timeslotHillClimbingSementara = new int[timeslotHillClimbing.length][2]; // handle temporary solution. if better than feasible, replace initial
 		
 		timeslotHillClimbingSementara = Evaluator.getTimeslot(timeslotHillClimbing);
 		
-		double bestPenalty = Evaluator.getPenalty(conflict_matrix, timeslotHillClimbing, jumlahmurid);
+		bestPenalty = Evaluator.getPenalty(conflict_matrix, timeslotHillClimbing, jumlahmurid); // initiate best penalty
 		
 		for(int i = 0; i < iterasi; i++) {
-			//System.out.println("Jumlah exam : " + jumlahexam);
-			//System.out.println("Jumlah murid : " + jumlahmurid);
 			int llh = randomNumber(1, 5);
 			int[][] timeslotLLH;
 			switch (llh) {

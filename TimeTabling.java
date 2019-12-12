@@ -81,6 +81,17 @@ public class TimeTabling {
 		// sort exam by degree
 		course_sorted = course.sortingByDegree(conflict_matrix, jumlahexam);
 		
+		// scheduling
+		/*
+		 * Scheduling by largest degree
+		 */
+		
+		long starttimeLargestDegree = System.nanoTime();
+		Schedule schedule = new Schedule(file, conflict_matrix, jumlahexam);
+		timeslot = schedule.schedulingByDegree(course_sorted);
+		int[][] timeslotByLargestDegree = schedule.getSchedule();
+		long endtimeLargestDegree = System.nanoTime();
+		
 		/*
 		 * params 1: file to be scheduling
 		 * params 2: conflict matrix from file
@@ -94,7 +105,7 @@ public class TimeTabling {
 		 * use hill climbing for timesloting
 		 */
 		long starttimeHC = System.nanoTime();
-		optimization.getTimeslotByHillClimbing1(); // use hillclimbing methode for iterates 1000000 times
+		optimization.getTimeslotByHillClimbing(); // use hillclimbing methode for iterates 1000000 times
 		long endtimeHC = System.nanoTime();
 		
 		/*
@@ -111,6 +122,12 @@ public class TimeTabling {
 		optimization.getTimeslotByTabuSearch();
 		long endtimeTS = System.nanoTime();
 		// end time
+		System.out.println("PENJADWALAN UNTUK " + filePilihanOutput + "\n");
+		
+		System.out.println("Timeslot dibutuhkan (menggunakan \"Constructive Heuristics\") 	: " + schedule.getJumlahTimeSlot(schedule.getSchedule()));
+		System.out.println("Penalti \"Constructive Heuristics\" 				: " + Evaluator.getPenalty(conflict_matrix, schedule.getSchedule(), jumlahmurid));
+		System.out.println("Waktu eksekusi yang dibutuhkan \"Constructive Heuristics\" " + ((double) (endtimeLargestDegree - starttimeLargestDegree)/1000000000) + " detik.\n");
+		
 		System.out.println("Timeslot dibutuhkan (menggunakan Hill Climbing) 		: " + optimization.getJumlahTimeslotHC());
 		System.out.println("Penalti Hill Climbing 						: " + Evaluator.getPenalty(conflict_matrix, optimization.getTimeslotHillClimbing(), jumlahmurid));
 		System.out.println("Waktu eksekusi yang dibutuhkan Hill Climbing " + ((double) (endtimeHC - starttimeHC)/1000000000) + " detik.\n");
