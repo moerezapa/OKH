@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public class Optimization {
-	int[][] timeslotHillClimbing, timeslotSimulatedAnnealing, timeslotTabuSearch, tabuSearchPenaltyList, conflict_matrix, course_sorted;
+	int[][] timeslotHillClimbing, timeslotSimulatedAnnealing, timeslotTabuSearch, initialTimeslot, conflict_matrix, course_sorted;
 	int[] timeslot;
 	double[] tabuSearchPenaltyList1;
 	String file;
@@ -40,8 +40,7 @@ public class Optimization {
 			try {
 				randomCourse = random(jumlahexam); // random course
 				randomTimeslot = random(schedule.getJumlahTimeSlot(initialTimeslot)); // random timeslot
-//				timeslotHillClimbingSementara[randomCourse][1] = randomTimeslot;
-			
+				
 				if (Schedule.checkRandomTimeslot(randomCourse, randomTimeslot, conflict_matrix, timeslotHillClimbingSementara)) {	
 					timeslotHillClimbingSementara[randomCourse][1] = randomTimeslot;
 					double penaltiAfterHillClimbing = Evaluator.getPenalty(conflict_matrix, timeslotHillClimbingSementara, jumlahmurid);
@@ -192,7 +191,7 @@ public class Optimization {
 					timeslotLLH = lowLevelHeuristics.move3(timeslotSimulatedAnnealingSementara);
 					break;
 				default:
-					timeslotLLH = lowLevelHeuristics.swap2(timeslotSimulatedAnnealingSementara);
+					timeslotLLH = lowLevelHeuristics.move1(timeslotSimulatedAnnealingSementara);
 					break;
 			}
 			
@@ -212,7 +211,8 @@ public class Optimization {
 //			System.out.println("temperature : " + currentTemperature);
 			// print current penalty of each iteration
 			System.out.println("Iterasi: " + (i+1) + " memiliki penalty " + Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealingSementara, jumlahmurid));
-			temperature *= 1 - coolingrate;
+//			temperature *= 1 - coolingrate;
+			temperature = temperature - coolingrate;
 		}
 //		bestPenalty = Evaluator.getPenalty(conflict_matrix, timeslotSimulatedAnnealing, jumlahmurid);
 		deltaPenalty = ((initialPenalty-bestPenalty)/initialPenalty)*100;
@@ -225,21 +225,6 @@ public class Optimization {
 		System.out.println("=============================================================");
 	}
 	public void getTimeslotByTabuSearch() {
-		/*
-		 * need:
-		 * conflict matrix
-		 * jumlah murid
-		 * jumlahcourse
-		 * max timeslot
-		 * timeslot awal
-		 * penalty awal (?)
-		 */
-		
-		//inisiasi random
-//        Random r = new Random();
-//        int rindex1,rindex2,rindex3 = 0;
-//        int rslot1,rslot2,rslot3 = 0;
-        
 		schedule = new Schedule(file, conflict_matrix, jumlahexam);
 		timeslot = schedule.schedulingByDegree(course_sorted);
 		
@@ -294,9 +279,10 @@ public class Optimization {
         		//membandingkan neighbor, pilih best neighbor, membandingkan juga apa ada di tabu list
            int j = 0;
            while (sneighborhood.size() > j) {
-        	   penalty2 = Evaluator.getPenalty(conflict_matrix, sneighborhood.get(j), jumlahmurid);
-               penalty1 = Evaluator.getPenalty(conflict_matrix, bestcandidate, jumlahmurid);
-               if(!(tabulist.contains(sneighborhood.get(j))) && Evaluator.getPenalty(conflict_matrix, sneighborhood.get(j), jumlahmurid) < Evaluator.getPenalty(conflict_matrix, bestcandidate, jumlahmurid))
+//        	   penalty2 = Evaluator.getPenalty(conflict_matrix, sneighborhood.get(j), jumlahmurid);
+//               penalty1 = Evaluator.getPenalty(conflict_matrix, bestcandidate, jumlahmurid);
+               if( !(tabulist.contains(sneighborhood.get(j))) && 
+            		   Evaluator.getPenalty(conflict_matrix, sneighborhood.get(j), jumlahmurid) < Evaluator.getPenalty(conflict_matrix, bestcandidate, jumlahmurid))
                  bestcandidate = sneighborhood.get(j);
                 	
                j++;
@@ -305,7 +291,7 @@ public class Optimization {
            sneighborhood.clear();
                 
            //bandingkan best neighbor dengan best best solution
-           if(Evaluator.getPenalty(conflict_matrix, bestcandidate, jumlahmurid) < Evaluator.getPenalty(conflict_matrix, bestTimeslot, jumlahmurid))
+           if(Evaluator.getPenalty(conflict_matrix, bestcandidate, jumlahmurid) < Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid))
               timeslotTabuSearch = Evaluator.getTimeslot(bestcandidate);
                 
            //masukkan best neighbor tadi ke tabu
@@ -315,12 +301,9 @@ public class Optimization {
                 
            //return sbest;
            tabuSearchPenaltyList1 = new double[100];
-           if ((iteration+1)%10 == 0) {
+           if ((iteration+1)%10 == 0)
                System.out.println("Iterasi: " + (iteration+1) + " memiliki penalty " + Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid));
-//               listPenalty.add(Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid));
-//               tabuSearchPenaltyList1[iteration] = Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid);
-//               tabuSearchPenaltyList1[iteration+1][1] = Evaluator.getPenalty(conflict_matrix, timeslotTabuSearch, jumlahmurid);
-           }
+
 //           for (int i = 0 ; i < iteration; i ++) {
 //        	   tabuSearchPenaltyList1[i] = listPenalty.get(i);
 //           }
